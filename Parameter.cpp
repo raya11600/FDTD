@@ -27,12 +27,6 @@ Parameter::Parameter() {
 	// CPML grid size
 	CPMLGrid = 20;
 
-	// Source & Totaltime
-	SourceMode = 1;
-		// Source=1: Sine Wave
-		lambda = 0.85e-6  //Wave length
-		T      = 11       //period you run
-
 	// Structure parameters
 	epsR = 1.0;
 }

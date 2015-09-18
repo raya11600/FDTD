@@ -15,10 +15,6 @@ private:
 	// Time grid parameters
 	double Courant;
 
-	// Source & Totaltime
-	double lambda;
-	int T;
-
 public:
 	// Basic physical parameters
 	double eps0;
@@ -40,10 +36,6 @@ public:
 
 	// CPML grid size
 	int CPMLGrid;
-
-	// Source & Totaltime
-	int SourceMode;
-	int totaltime;
 
 	// Structure parameters
 	double epsR;

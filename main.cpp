@@ -3,6 +3,7 @@
 #include <cmath>
 #include "Update.h"
 #include "Coefficient.h"
+#include "Source.h"
 using namespace std;
 
 int SIZE_X = 100;
@@ -13,6 +14,8 @@ int CPMLGrid = 20;
 int main() {
 
 	Update updater(SIZE_Z);
+	double *ex = updater.getex();
+	double *hy = updater.gethy();
 	cout << "[INFO] Initialized class Update." << endl;
 
 	Coefficient coef(SIZE_Z);
@@ -21,8 +24,15 @@ int main() {
 	double *Chy = coef.getChy();
 	cout << "[INFO] Initialize class Coefficient" << endl;
 
+	Source source;
+	cout << "[Debug] q = " << source.getperiodStep() << endl;
+
 	FILE *snapshot;
 	snapshot = fopen("data.log","w");
+	for( int k = 0; k < SIZE_Z; k++ ) {
+		fprintf(snapshot, "%i ", k+1);
+	}
+	fprintf(snapshot, "\n");
 	//cout << "[INFO] Start entering the time loop." << endl;
 	for (int t = 0; t < 500; t++) {
 

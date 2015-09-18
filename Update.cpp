@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <iostream>
+#include <cmath>
 #include "Update.h"
 #include "ArrayGenerator.h"
 #include "Parameter.h"
 #include "CPML.h"
+#include "Source.h"
 using namespace std;
 
 Update::Update(int size1D) {
@@ -38,10 +40,23 @@ void Update::Update1Dfield_e(double *Cex, int gridsize, int t) {
 	for (int k = 1; k < gridsize; k++) {
 		ex_now[k] = ex[k] + Cex[k] * ( hy[k] - hy[k-1] );
 	}
-	//ex_now[startZ] = sin( omega * dt * t );
+	
+	// Add Source
+	Source source;
+	Parameter param;
+	int SourceMode = source.getmode();
+	if( SourceMode == 1 ) {
+		double omega = source.getangularFreq();
+		ex_now[gridsize/2] = sin( omega * param.dt * t );
+	}
+	else if ( SourceMode == 2 ) {
+
+	}
+
 	//if ( t == 1 ) {
-		ex_now[50] = 10;
+	//	ex_now[50] = 1;
 	//}
+
 	ex_now[0]=ex_bef[1];
 	ex_now[gridsize-1]=ex_bef[gridsize-2];
 
