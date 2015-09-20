@@ -2,4 +2,3 @@ data.log
 *.o
 helloworld
 exe
-*.py
