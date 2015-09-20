@@ -1,5 +1,4 @@
-data.log
 *.o
-helloworld
-exe
 *.data
+*.log
+exe
