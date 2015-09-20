@@ -26,19 +26,20 @@ public:
 	// Space grid parameters
 	double dx;
 
-	//int SIZE_X;
-	//int SIZE_Y;
-	//int SIZE_Z;
+	int SIZE_X;
+	int SIZE_Y;
+	int SIZE_Z;
 
 	// Time grid parameters
 	double dt;
 
-
-	// CPML grid size
-	int CPMLGrid;
-
 	// Structure parameters
 	double epsR;
+
+private:
+	void InitBasicParam();
+	void InitSpaceParam();
+	void InitTimeGrid();
 
 public:
 	Parameter();

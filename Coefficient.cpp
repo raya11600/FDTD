@@ -37,27 +37,28 @@ void Coefficient::InitBasicCoef3D(int size_x, int size_y, int size_z) {
 
 }
 
-void Coefficient::Init1DCoefWithCpml(int size, int size_CPML) {
-	CPML obj(size_CPML);
-	double *kappa_e = obj.getkappa_e();
-	double *kappa_h = obj.getkappa_h();
+void Coefficient::Init1DCoefWithCpml(int size) {
+	CPML cpml;
+	int CPMLGrid = cpml.getCPMLGrid();
+	double *kappa_e = cpml.getkappa_e();
+	double *kappa_h = cpml.getkappa_h();
 
 	// Coefficient for 1D update equation with CPML
 	for(int i = 0; i < size; i++) { 
-		if ( i >= 1 && i <= 1 + size_CPML ) {
-			Cex[i] /= kappa_e[size_CPML+1-i];
+		if ( i >= 1 && i <= 1 + CPMLGrid ) {
+			Cex[i] /= kappa_e[CPMLGrid+1-i];
 		}
-		if ( i >= size-2-size_CPML && i <= size-2 ) {
-			Cex[i] /= kappa_e[i-(size-2-size_CPML)];
+		if ( i >= size-2-CPMLGrid && i <= size-2 ) {
+			Cex[i] /= kappa_e[i-(size-2-CPMLGrid)];
 		}
 	}
 
 	for(int i = 0; i < size-1; i++) { 
-		if ( i >= 0 && i <= 0 + size_CPML ) {
-			Chy[i] /= kappa_h[size_CPML-i];
+		if ( i >= 0 && i <= 0 + CPMLGrid ) {
+			Chy[i] /= kappa_h[CPMLGrid-i];
 		}
-		if ( i >= size-2-size_CPML && i <= size-2 ) {
-			Chy[i] /= kappa_h[i-(size-2-size_CPML)];
+		if ( i >= size-2-CPMLGrid && i <= size-2 ) {
+			Chy[i] /= kappa_h[i-(size-2-CPMLGrid)];
 		}
 	}
 }

@@ -5,16 +5,18 @@
 #include "Parameter.h"
 using namespace std;
 
-CPML::CPML(int size_CPML) {
-	ArrayGenerator generator;
-	B_e = generator.Alloc1DArray_double(size_CPML+1);
-	B_h = generator.Alloc1DArray_double(size_CPML+1);
-	C_e = generator.Alloc1DArray_double(size_CPML+1);
-	C_h = generator.Alloc1DArray_double(size_CPML+1);
-	kappa_e = generator.Alloc1DArray_double(size_CPML+1);
-	kappa_h = generator.Alloc1DArray_double(size_CPML+1);
+CPML::CPML() {
+	CPMLGrid = 20;
 
-	InitCPML(size_CPML);
+	ArrayGenerator generator;
+	B_e = generator.Alloc1DArray_double(CPMLGrid+1);
+	B_h = generator.Alloc1DArray_double(CPMLGrid+1);
+	C_e = generator.Alloc1DArray_double(CPMLGrid+1);
+	C_h = generator.Alloc1DArray_double(CPMLGrid+1);
+	kappa_e = generator.Alloc1DArray_double(CPMLGrid+1);
+	kappa_h = generator.Alloc1DArray_double(CPMLGrid+1);
+
+	InitCPML();
 
 }
 
@@ -27,7 +29,7 @@ CPML::~CPML() {
 	delete[] kappa_h; kappa_h = NULL;
 }
 
-void CPML::InitCPML(int size_CPML) {
+void CPML::InitCPML() {
 	Parameter param;
 
 	int m=4; //powerlaw; 3<=m<=4
@@ -37,20 +39,20 @@ void CPML::InitCPML(int size_CPML) {
 	double alpha_max=0.24;
 
 	ArrayGenerator generator;
-	double *sigma_e = generator.Alloc1DArray_double(size_CPML+1);
-	double *sigma_h = generator.Alloc1DArray_double(size_CPML+1);
-	double *alpha_e = generator.Alloc1DArray_double(size_CPML+1);
-	double *alpha_h = generator.Alloc1DArray_double(size_CPML+1);
+	double *sigma_e = generator.Alloc1DArray_double(CPMLGrid+1);
+	double *sigma_h = generator.Alloc1DArray_double(CPMLGrid+1);
+	double *alpha_e = generator.Alloc1DArray_double(CPMLGrid+1);
+	double *alpha_h = generator.Alloc1DArray_double(CPMLGrid+1);
 
-	for(int i = 0; i <= size_CPML; i++) { 
-		sigma_e[i] = sigma_max * pow( (double(i+0.5)/size_CPML) , m);
-		sigma_h[i] = sigma_max * pow( (double(i+1.0)/size_CPML) , m);
+	for(int i = 0; i <= CPMLGrid; i++) { 
+		sigma_e[i] = sigma_max * pow( (double(i+0.5)/CPMLGrid) , m);
+		sigma_h[i] = sigma_max * pow( (double(i+1.0)/CPMLGrid) , m);
 
-		kappa_e[i] = 1 + (kappa_max-1) * pow( (double(i+0.5)/size_CPML) , m);
-		kappa_h[i] = 1 + (kappa_max-1) * pow( (double(i+1.0)/size_CPML) , m);
+		kappa_e[i] = 1 + (kappa_max-1) * pow( (double(i+0.5)/CPMLGrid) , m);
+		kappa_h[i] = 1 + (kappa_max-1) * pow( (double(i+1.0)/CPMLGrid) , m);
 
-		alpha_e[i] = alpha_max * pow( (double(size_CPML-(i+0.0))/size_CPML) , ma);
-		alpha_h[i] = alpha_max * pow( (double(size_CPML-(i+0.5))/size_CPML) , ma);
+		alpha_e[i] = alpha_max * pow( (double(CPMLGrid-(i+0.0))/CPMLGrid) , ma);
+		alpha_h[i] = alpha_max * pow( (double(CPMLGrid-(i+0.5))/CPMLGrid) , ma);
 
 		B_e[i] = exp( -(param.dt/param.eps0) * (sigma_e[i]/kappa_e[i] + alpha_e[i]) );
 		B_h[i] = exp( -(param.dt/param.eps0) * (sigma_h[i]/kappa_h[i] + alpha_h[i]) );
@@ -66,6 +68,10 @@ void CPML::InitCPML(int size_CPML) {
 	delete[] alpha_e; alpha_e = NULL;
 	delete[] alpha_h; alpha_h = NULL;
 
+}
+
+int CPML::getCPMLGrid() {
+	return CPMLGrid;
 }
 
 double *CPML::getkappa_e() {

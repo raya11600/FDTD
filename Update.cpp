@@ -64,42 +64,44 @@ void Update::Update1Dfield_h(double *Chy, int gridsize, int t) {
 	}
 }
 
-void Update::Update1DCpml_ex(int size, int size_CPML) {
+void Update::Update1DCpml_ex(int size) {
 	Parameter param;
-	CPML cpml(size_CPML);
+	CPML cpml;
+	int CPMLGrid = cpml.getCPMLGrid();
 	double *B_e = cpml.getB_e();
 	double *C_e = cpml.getC_e();
 
 	for( int k = 0; k < size; k++ ) {
-		if( k >= 1 && k <= 1+size_CPML ) {
-			psi_ex[k] = B_e[size_CPML+1-k] * psi_ex[k] + 
-						C_e[size_CPML+1-k] * (hy[k] - hy[k-1]) / param.dx; 
+		if( k >= 1 && k <= 1+CPMLGrid ) {
+			psi_ex[k] = B_e[CPMLGrid+1-k] * psi_ex[k] + 
+						C_e[CPMLGrid+1-k] * (hy[k] - hy[k-1]) / param.dx; 
 			ex[k] = ex[k] - (param.dt/param.eps0) * psi_ex[k];
 		}
-		if( k >= size-2-size_CPML && k <= size-2 ) {
-			psi_ex[k] = B_e[k-(size-2-size_CPML)] * psi_ex[k] +
-						C_e[k-(size-2-size_CPML)] * (hy[k] - hy[k-1]) / param.dx;
+		if( k >= size-2-CPMLGrid && k <= size-2 ) {
+			psi_ex[k] = B_e[k-(size-2-CPMLGrid)] * psi_ex[k] +
+						C_e[k-(size-2-CPMLGrid)] * (hy[k] - hy[k-1]) / param.dx;
 			ex[k] = ex[k] - (param.dt/param.eps0) * psi_ex[k];
 		}
 	}
 
 }
 
-void Update::Update1DCpml_hy(int size, int size_CPML) {
+void Update::Update1DCpml_hy(int size) {
 	Parameter param;
-	CPML cpml(size_CPML);
+	CPML cpml;
+	int CPMLGrid = cpml.getCPMLGrid();
 	double *B_h = cpml.getB_h();
 	double *C_h = cpml.getC_h();
 
 	for( int k = 0; k < size; k++ ) {
-		if( k >= 0 && k <= 0+size_CPML ) {
-			psi_hy[k] = B_h[size_CPML-k] * psi_hy[k] +
-						C_h[size_CPML-k] * (ex[k+1] - ex[k]) / param.dx;
+		if( k >= 0 && k <= 0+CPMLGrid ) {
+			psi_hy[k] = B_h[CPMLGrid-k] * psi_hy[k] +
+						C_h[CPMLGrid-k] * (ex[k+1] - ex[k]) / param.dx;
 			hy[k] = hy[k] - (param.dt/param.mu0) * psi_hy[k];
 		}
-		if( k >= size-1-size_CPML && k <= size-1 ) {
-			psi_hy[k] = B_h[k-(size-1-size_CPML)] * psi_hy[k] +
-						C_h[k-(size-1-size_CPML)] * (ex[k+1] - ex[k]) / param.dx;
+		if( k >= size-1-CPMLGrid && k <= size-1 ) {
+			psi_hy[k] = B_h[k-(size-1-CPMLGrid)] * psi_hy[k] +
+						C_h[k-(size-1-CPMLGrid)] * (ex[k+1] - ex[k]) / param.dx;
 			hy[k] = hy[k] - (param.dt/param.mu0) * psi_hy[k];
 		}
 	}

@@ -16,7 +16,7 @@ public:
 	Coefficient(int size1D);
 	~Coefficient();
 
-	void Init1DCoefWithCpml(int size, int size_CPML);
+	void Init1DCoefWithCpml(int size);
 
 	double *getCex();
 	double *getChy();

@@ -21,8 +21,8 @@ public:
 	void Update1Dfield_e(double *Cex, int gridsize, int t);
 	void Update1Dfield_h(double *Chy, int gridsize, int t);
 
-	void Update1DCpml_ex(int size, int size_CPML);
-	void Update1DCpml_hy(int size, int size_CPML);
+	void Update1DCpml_ex(int size);
+	void Update1DCpml_hy(int size);
 
 	double *getex();
 	double *gethy();

@@ -3,6 +3,8 @@
 
 class CPML {
 private:
+	int CPMLGrid;
+
 	double *B_e;
 	double *B_h;
 	double *C_e;
@@ -10,12 +12,13 @@ private:
 	double *kappa_e;
 	double *kappa_h;
 
-	void InitCPML(int size_CPML);
+	void InitCPML();
 
 public:
-	CPML(int size_CPML);
+	CPML();
 	~CPML();
 
+	int getCPMLGrid();
 	double *getB_e();
 	double *getB_h();
 	double *getC_e();

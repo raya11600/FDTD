@@ -9,7 +9,7 @@ using namespace std;
 int SIZE_X = 100;
 int SIZE_Y = 100;
 int SIZE_Z = 100;
-int CPMLGrid = 20;
+//int CPMLGrid = 20;
 
 int main() {
 
@@ -19,7 +19,7 @@ int main() {
 	cout << "[INFO] Initialized class Update." << endl;
 
 	Coefficient coef(SIZE_Z);
-	coef.Init1DCoefWithCpml(SIZE_Z, CPMLGrid);
+	coef.Init1DCoefWithCpml(SIZE_Z);
 	double *Cex = coef.getCex();
 	double *Chy = coef.getChy();
 	cout << "[INFO] Initialize class Coefficient" << endl;
@@ -39,11 +39,11 @@ int main() {
 
 		updater.Update1Dfield_e(Cex, SIZE_Z, t);
 
-		updater.Update1DCpml_ex(SIZE_Z, CPMLGrid);
+		updater.Update1DCpml_ex(SIZE_Z);
 
 		updater.Update1Dfield_h(Chy, SIZE_Z-1, t);
 
-		updater.Update1DCpml_hy(SIZE_Z-1, CPMLGrid);
+		updater.Update1DCpml_hy(SIZE_Z-1);
 
 		for (int k = 0; k < SIZE_Z; k++) {
 			fprintf(snapshot, "%g ", ex[k]);
