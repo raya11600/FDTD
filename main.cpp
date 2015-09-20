@@ -25,7 +25,8 @@ int main() {
 	cout << "[INFO] Initialize class Coefficient" << endl;
 
 	Source source;
-	cout << "[Debug] q = " << source.getperiodStep() << endl;
+	int Totaltime = source.gettotaltime();
+	source.outputSettings();
 
 	FILE *snapshot;
 	snapshot = fopen("data.log","w");

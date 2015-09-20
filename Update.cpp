@@ -43,15 +43,7 @@ void Update::Update1Dfield_e(double *Cex, int gridsize, int t) {
 	
 	// Add Source
 	Source source;
-	Parameter param;
-	int SourceMode = source.getmode();
-	if( SourceMode == 1 ) {
-		double omega = source.getangularFreq();
-		ex_now[gridsize/2] = sin( omega * param.dt * t );
-	}
-	else if ( SourceMode == 2 ) {
-
-	}
+	ex_now[gridsize/2] = source.getSource(t);
 
 	//if ( t == 1 ) {
 	//	ex_now[50] = 1;
