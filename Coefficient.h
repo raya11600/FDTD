@@ -28,7 +28,8 @@ private:
 	double ***Chzy;
 	double ***Chzx;
 
-	void InitBasicCoef3D(int size_x, int size_y, int size_z);
+	void Alloc3DArray(int SIZE_X, int SIZE_Y, int SIZE_Z);
+	void InitBasicCoef3D(int SIZE_X, int SIZE_Y, int SIZE_Z);
 
 public:
 	Coefficient();

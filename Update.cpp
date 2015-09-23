@@ -68,7 +68,7 @@ Update::~Update() {
 				delete[] Ey[i][j];
 				delete[] Hx[i][j];
 			}
-			//delete[] Ez[i][j];
+			delete[] Ez[i][j];
 			if( i != SIZE_X-1 && j != SIZE_Y-1 ) {
 				delete[] Hz[i][j];
 			}
@@ -213,7 +213,7 @@ void Update::Update3Dfield_H(double ***Chxz, double ***Chxy, double ***Chyx,
 	int SIZE_X = param.SIZE_X;
 	int SIZE_Y = param.SIZE_Y;
 	int SIZE_Z = param.SIZE_Z;
-	
+
 	for( int i = 0; i < SIZE_X; i++ )
 		for( int j = 0; j < SIZE_Y-1; j++ )
 			for( int k = 0; k < SIZE_Z-1; k++ ) {
@@ -246,4 +246,28 @@ double *Update::getex() {
 
 double *Update::gethy() {
 	return hy;
+}
+
+double ***Update::getEx() {
+	return Ex;
+}
+
+double ***Update::getEy() {
+	return Ey;
+}
+
+double ***Update::getEz() {
+	return Ez;
+}
+
+double ***Update::getHx() {
+	return Hx;
+}
+
+double ***Update::getHy() {
+	return Hy;
+}
+
+double ***Update::getHz() {
+	return Hz;
 }

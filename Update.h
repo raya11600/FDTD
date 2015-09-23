@@ -43,6 +43,13 @@ public:
 
 	double *getex();
 	double *gethy();
+
+	double ***getEx();
+	double ***getEy();
+	double ***getEz();
+	double ***getHx();
+	double ***getHy();
+	double ***getHz();
 };
 
 #endif
