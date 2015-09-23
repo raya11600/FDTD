@@ -16,6 +16,7 @@ Coefficient::Coefficient() {
 	Chy = generator.Alloc1DArray_double(param.SIZE1D-1);
 
 	InitBasicCoef1D(param.SIZE1D);
+	InitBasicCoef3D(param.SIZE_X, param.SIZE_Y, param.SIZE_Z);
 }
 
 Coefficient::~Coefficient() {
@@ -23,19 +24,59 @@ Coefficient::~Coefficient() {
 	delete[] Chy; Chy = NULL;
 }
 
-void Coefficient::InitBasicCoef1D(int size) {
+void Coefficient::InitBasicCoef1D(int SIZE1D) {
 	// Coefficient for 1D update equation
-	for(int i = 0; i < size; i++) { 
+	for(int i = 0; i < SIZE1D; i++) { 
 		Cex[i] = c_e;
 	}
 
-	for(int i = 0; i < size-1; i++) { 
+	for(int i = 0; i < SIZE1D-1; i++) { 
 		Chy[i] = c_h;
 	}
 }
 
-void Coefficient::InitBasicCoef3D(int size_x, int size_y, int size_z) {
+void Coefficient::InitBasicCoef3D(int SIZE_X, int SIZE_Y, int SIZE_Z) {
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 1; j < SIZE_Y-1; j++ )
+			for( int k = 1; k < SIZE_Z-1;k++) {
+				Cexz[i][j][k] = c_e;
+				Cexy[i][j][k] = c_e;
+			}
 
+	for( int i = 1; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 1; k < SIZE_Z-1; k++ ) {
+				Ceyx[i][j][k] = c_e;
+				Ceyz[i][j][k] = c_e;
+			}
+
+	for( int i = 1; i < SIZE_X-1; i++ )
+		for( int j = 1; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				Cezy[i][j][k] = c_e;
+				Cezx[i][j][k] = c_e;
+			}
+
+	for( int i = 0; i < SIZE_X; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				Chxz[i][j][k] = c_h;
+				Chxy[i][j][k] = c_h;
+			}
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y; j++ )
+			for( int k = 0; k <SIZE_Z-1; k++ ) {
+				Chyx[i][j][k] = c_h;
+				Chyz[i][j][k] = c_h;
+			}
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z; k++ ) {
+				Chzy[i][j][k] = c_h;
+				Chzx[i][j][k] = c_h;
+			}
 }
 
 void Coefficient::Init1DCoefWithCpml() {
