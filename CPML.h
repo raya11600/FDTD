@@ -18,6 +18,8 @@ public:
 	CPML();
 	~CPML();
 
+	void OutputCPML();
+
 	int getCPMLGrid();
 	double *getB_e();
 	double *getB_h();

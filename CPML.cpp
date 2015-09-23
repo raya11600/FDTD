@@ -2,7 +2,7 @@
 #include <cmath>
 #include "CPML.h"
 #include "ArrayGenerator.h"
-#include "Parameter.h"
+//#include "Parameter.h"
 using namespace std;
 
 CPML::CPML() {
@@ -35,7 +35,7 @@ void CPML::InitCPML() {
 	int m=4; //powerlaw; 3<=m<=4
 	int kappa_max=15;
 	int ma = 1;
-	double sigma_max= 0.8*(m+1)/(param.imp0*param.dx);
+	double sigma_max= 0.8*(m+1)/(param->imp0*param->dx);
 	double alpha_max=0.24;
 
 	ArrayGenerator generator;
@@ -54,8 +54,8 @@ void CPML::InitCPML() {
 		alpha_e[i] = alpha_max * pow( (double(CPMLGrid-(i+0.0))/CPMLGrid) , ma);
 		alpha_h[i] = alpha_max * pow( (double(CPMLGrid-(i+0.5))/CPMLGrid) , ma);
 
-		B_e[i] = exp( -(param.dt/param.eps0) * (sigma_e[i]/kappa_e[i] + alpha_e[i]) );
-		B_h[i] = exp( -(param.dt/param.eps0) * (sigma_h[i]/kappa_h[i] + alpha_h[i]) );
+		B_e[i] = exp( -(param->dt/param->eps0) * (sigma_e[i]/kappa_e[i] + alpha_e[i]) );
+		B_h[i] = exp( -(param->dt/param->eps0) * (sigma_h[i]/kappa_h[i] + alpha_h[i]) );
 
 		C_e[i] = sigma_e[i] / kappa_e[i] / (sigma_e[i] + kappa_e[i]*alpha_e[i])
 		         * (B_e[i] - 1.0);
@@ -68,6 +68,58 @@ void CPML::InitCPML() {
 	delete[] alpha_e; alpha_e = NULL;
 	delete[] alpha_h; alpha_h = NULL;
 
+}
+
+void CPML::OutputCPML() {
+	FILE *file;
+	file = fopen("cpml.data", "w");
+	fprintf(file, "----- Basic parameters -----\n");
+	fprintf(file, "CPMLGrid = %i\n", CPMLGrid);
+	fprintf(file, "\n");
+	fprintf(file, "m = %i\n", m);;
+	fprintf(file, "kappa_max = %i\n", kappa_max);
+	fprintf(file, "ma = %i\n", ma);
+	fprintf(file, "sigma_max = %g\n", sigma_max);
+	fprintf(file, "alpha_max = %g\n", alpha_max);
+	fprintf(file, "\n");
+	fprintf(file, "----- Kappa -----\n");
+	fprintf(file, "kappa_e = \n");
+	for( int i = 0; i <= CPMLGrid; i++ ) {
+		fprintf(file, "%g ", kappa_e[i]);
+	}
+	fprintf(file, "\n");
+	fprintf(file, "kappa_h = \n");
+	for( int i = 0; i <= CPMLGrid; i++ ) {
+		fprintf(file, "%g ", kappa_h[i]);
+	}
+	fprintf(file, "\n");
+	fprintf(file, "\n");
+	fprintf(file, "----- B parameter -----\n");
+	fprintf(file, "B_e = \n");
+	for( int i = 0; i <= CPMLGrid; i++ ) {
+		fprintf(file, "%g ", B_e[i]);
+	}
+	fprintf(file, "\n");
+	fprintf(file, "B_h = \n");
+	for( int i = 0; i <= CPMLGrid; i++ ) {
+		fprintf(file, "%g ", B_h[i]);
+	}
+	fprintf(file, "\n");
+	fprintf(file, "\n");
+	fprintf(file, "----- C parameter -----\n");
+	fprintf(file, "C_e = \n");
+	for( int i = 0; i <= CPMLGrid; i++ ) {
+		fprintf(file, "%g ", C_e[i]);
+	}
+	fprintf(file, "\n");
+	fprintf(file, "C_h = \n");
+	for( int i = 0; i <= CPMLGrid; i++ ) {
+		fprintf(file, "%g ", C_h[i]);
+	}
+	fprintf(file, "\n");
+	fprintf(file, "\n");
+	fclose(file);
+	file = NULL;
 }
 
 int CPML::getCPMLGrid() {
