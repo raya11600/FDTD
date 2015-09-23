@@ -29,6 +29,7 @@ public:
 	int SIZE_X;
 	int SIZE_Y;
 	int SIZE_Z;
+	int SIZE1D;
 
 	// Time grid parameters
 	double dt;
@@ -43,6 +44,7 @@ private:
 
 public:
 	Parameter();
+	void OutputParam();
 };
 
 #endif

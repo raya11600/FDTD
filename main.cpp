@@ -4,14 +4,19 @@
 #include "Update.h"
 #include "Coefficient.h"
 #include "Source.h"
+#include "Parameter.h"
 using namespace std;
 
-int SIZE_X = 100;
-int SIZE_Y = 100;
-int SIZE_Z = 100;
-//int CPMLGrid = 20;
+Parameter param;
+int SIZE_X = param.SIZE_X;
+int SIZE_Y = param.SIZE_Y;
+int SIZE_Z = param.SIZE_Z;
+int SIZE1D = param.SIZE1D;
+
 
 int main() {
+
+	param.OutputParam();
 
 	Update updater(SIZE_Z);
 	double *ex = updater.getex();
