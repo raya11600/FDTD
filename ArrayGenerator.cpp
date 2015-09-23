@@ -16,7 +16,7 @@ double *ArrayGenerator::Alloc1DArray_double(int size) {
 	double *array = new double [size];
 	//cout << "[Debug] A 1D double array has been allocated." << endl;
 	for (int i = 0; i < size; i++) {
-		array[i] = 0;
+		array[i] = 0.0;
 	}
 	//cout << "[Debug] A 1D int array has been initialized." << endl;
 	return array;
@@ -30,7 +30,12 @@ int ***ArrayGenerator::Alloc3DArray_int(int size_x, int size_y, int size_z) {
 			array[i][j] = new int [size_z];
 		}
 	}
-	cout << "[Debug] 3D int array has been allocated" << endl;
+	for( int i = 0; i < size_x; i++ )
+		for( int j = 0; j < size_y; j++ )
+			for( int k = 0; k < size_z; k++ ) {
+				array[i][j][k] = 0;
+			}
+	//cout << "[Debug] 3D int array has been allocated" << endl;
 	return array;
 }
 
@@ -42,6 +47,11 @@ double ***ArrayGenerator::Alloc3DArray_double(int size_x, int size_y, int size_z
 			array[i][j] = new double [size_z];
 		}
 	}
-	cout << "[Debug] 3D double array has been allocated" << endl;
+	for( int i = 0; i < size_x; i++ )
+		for( int j = 0; j < size_y; j++ )
+			for( int k = 0; k < size_z; k++ ) {
+				array[i][j][k] = 0.0;
+			}
+	//cout << "[Debug] 3D double array has been allocated" << endl;
 	return array;
 }
