@@ -11,60 +11,6 @@ using namespace std;
 Update::Update() {
 	Alloc1DArray();
 	Alloc3DArray();
-
-	/*Parameter param;
-	ArrayGenerator generator;
-	int SIZE_X = param.SIZE_X;
-	int SIZE_Y = param.SIZE_Y;
-	int SIZE_Z = param.SIZE_Z;
-	Ex = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z);*/
-}
-
-Update::~Update() {
-	delete[] ex; ex = NULL;
-	delete[] hy; hy = NULL;
-
-	delete[] ex_now; ex_now = NULL;
-	delete[] ex_bef; ex_bef = NULL;
-
-	delete[] psi_ex; psi_ex = NULL;
-	delete[] psi_hy; psi_hy = NULL;
-
-	Parameter param;
-	int SIZE_X = param.SIZE_X;
-	int SIZE_Y = param.SIZE_Y;
-
-	for( int i = 0; i < SIZE_X; i++ ) {
-		for( int j = 0; j < SIZE_Y; j++ ) {
-			if( i != SIZE_X-1 ) { 
-				delete[] Ex[i][j];
-				//delete[] Hy[i][j];
-			}
-			if( j != SIZE_Y-1 ) {
-				//delete[] Ey[i][j];
-				//delete[] Hx[i][j];
-			}
-			//delete[] Ez[i][j];
-			if( i != SIZE_X-1 && j != SIZE_Y-1 ) {
-				//delete[] Hz[i][j];
-			}
-		}
-		if( i != SIZE_X-1 ) {
-			delete[] Ex[i];
-			//delete[] Hy[i];
-			//delete[] Hz[i];
-		}
-		//delete[] Ey[i];
-		//delete[] Ez[i];
-		//delete[] Hx[i];
-	}
-	delete[] Ex; Ex = NULL;
-	//delete[] Ey; Ey = NULL;
-	//delete[] Ez; Ez = NULL;
-	//delete[] Hx; Hx = NULL;
-	//delete[] Hy; Hy = NULL;
-	//delete[] Hz; Hz = NULL;
-
 }
 
 void Update::Alloc1DArray() {
@@ -90,11 +36,58 @@ void Update::Alloc3DArray() {
 	ArrayGenerator generator;
 
 	Ex = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z);
-	/*Ey = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z);
+	Ey = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z);
 	Ez = generator.Alloc3DArray_double(SIZE_X, SIZE_Y, SIZE_Z-1);
 	Hx = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z-1);
 	Hy = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z-1);
-	Hz = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y-1, SIZE_Z);*/
+	Hz = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y-1, SIZE_Z);
+
+}
+
+Update::~Update() {
+	delete[] ex; ex = NULL;
+	delete[] hy; hy = NULL;
+
+	delete[] ex_now; ex_now = NULL;
+	delete[] ex_bef; ex_bef = NULL;
+
+	delete[] psi_ex; psi_ex = NULL;
+	delete[] psi_hy; psi_hy = NULL;
+
+	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+
+	for( int i = 0; i < SIZE_X; i++ ) {
+		for( int j = 0; j < SIZE_Y; j++ ) {
+			if( i != SIZE_X-1 ) { 
+				delete[] Ex[i][j];
+				delete[] Hy[i][j];
+			}
+			if( j != SIZE_Y-1 ) {
+				delete[] Ey[i][j];
+				delete[] Hx[i][j];
+			}
+			//delete[] Ez[i][j];
+			if( i != SIZE_X-1 && j != SIZE_Y-1 ) {
+				delete[] Hz[i][j];
+			}
+		}
+		if( i != SIZE_X-1 ) {
+			delete[] Ex[i];
+			delete[] Hy[i];
+			delete[] Hz[i];
+		}
+		delete[] Ey[i];
+		delete[] Ez[i];
+		delete[] Hx[i];
+	}
+	delete[] Ex; Ex = NULL;
+	delete[] Ey; Ey = NULL;
+	delete[] Ez; Ez = NULL;
+	delete[] Hx; Hx = NULL;
+	delete[] Hy; Hy = NULL;
+	delete[] Hz; Hz = NULL;
 
 }
 
@@ -178,6 +171,72 @@ void Update::Update1DCpml_hy() {
 			hy[k] = hy[k] - (param.dt/param.mu0) * psi_hy[k];
 		}
 	}
+
+}
+
+void Update::Update3Dfield_E(double ***Cexz, double ***Cexy, double ***Ceyx,
+							 double ***Ceyz, double ***Cezy, double ***Cezx) {
+	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 1; j < SIZE_Y-1; j++ )
+			for( int k = 1; k < SIZE_Z-1;k++) {
+				Ex[i][j][k] = Ex[i][j][k] 
+							+ Cexz[i][j][k] * (Hz[i][j][k] - Hz[i][j-1][k]) 
+							- Cexy[i][j][k] * (Hy[i][j][k] - Hy[i][j][k-1]);
+			}
+
+	for( int i = 1; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 1; k < SIZE_Z-1; k++ ) {
+				Ey[i][j][k] = Ey[i][j][k] 
+							+ Ceyx[i][j][k] * (Hx[i][j][k] - Hx[i][j][k-1])
+							- Ceyz[i][j][k] * (Hz[i][j][k] - Hz[i-1][j][k]);
+			}
+
+	for( int i = 1; i < SIZE_X-1; i++ )
+		for( int j = 1; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				Ez[i][j][k] = Ez[i][j][k] 
+							+ Cezy[i][j][k] * (Hy[i][j][k] - Hy[i-1][j][k])
+							- Cezx[i][j][k] * (Hx[i][j][k] - Hx[i][j-1][k]);
+			}
+
+}
+
+void Update::Update3Dfield_H(double ***Chxz, double ***Chxy, double ***Chyx,
+							 double ***Chyz, double ***Chzy, double ***Chzx) {
+	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
+	
+	for( int i = 0; i < SIZE_X; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				Hx[i][j][k] = Hx[i][j][k] 
+							- Chxz[i][j][k] * (Ez[i][j+1][k] - Ez[i][j][k])
+							+ Chxy[i][j][k] * (Ey[i][j][k+1] - Ey[i][j][k]);
+			}
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y; j++ )
+			for( int k = 0; k <SIZE_Z-1; k++ ) {
+				Hy[i][j][k] = Hy[i][j][k] 
+							- Chyx[i][j][k] * (Ex[i][j][k+1] - Ex[i][j][k])
+							+ Chyz[i][j][k] * (Ez[i+1][j][k] - Ez[i][j][k]);
+			}
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z; k++ ) {
+				Hz[i][j][k] = Hz[i][j][k] 
+							- Chzy[i][j][k] * (Ey[i+1][j][k] - Ey[i][j][k])
+							+ Chzx[i][j][k] * (Ex[i][j+1][k] - Ex[i][j][k]);
+			}
 
 }
 

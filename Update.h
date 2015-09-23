@@ -36,6 +36,11 @@ public:
 	void Update1DCpml_ex();
 	void Update1DCpml_hy();
 
+	void Update3Dfield_E(double ***Cexz, double ***Cexy, double ***Ceyx,
+						 double ***Ceyz, double ***Cezy, double ***Cezx);
+	void Update3Dfield_H(double ***Chxz, double ***Chxy, double ***Chyx,
+						 double ***Chyz, double ***Chzy, double ***Chzx);
+
 	double *getex();
 	double *gethy();
 };
