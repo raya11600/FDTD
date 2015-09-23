@@ -63,6 +63,27 @@ void Coefficient::Init1DCoefWithCpml(int size) {
 	}
 }
 
+void Coefficient::OutputCoef(int size1D) {
+	FILE *file;
+	file = fopen("coefficient.data", "w");
+	fprintf(file, "----- Basic parameters -----\n");
+	fprintf(file, "c_e = dt/dx/eps0 = %g\n", c_e);
+	fprintf(file, "c_h = dt/dx/eps0 = %g\n", c_h);
+	fprintf(file, "\n");
+	fprintf(file, "----- 1D Cex -----\n");
+	for( int i = 0; i < size1D; i++ ) {
+		fprintf(file, "%g ", Cex[i]);
+	}
+	fprintf(file, "\n\n");
+	fprintf(file, "----- 1D Chy -----\n");
+	for( int i = 0; i < size1D; i++ ) {
+		fprintf(file, "%g ", Chy[i]);
+	}
+	fprintf(file, "\n\n");
+	fclose(file);
+	file = NULL;
+}
+
 double *Coefficient::getCex() {
 	return Cex;
 }

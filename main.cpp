@@ -22,6 +22,7 @@ int main() {
 	coef.Init1DCoefWithCpml(SIZE_Z);
 	double *Cex = coef.getCex();
 	double *Chy = coef.getChy();
+	coef.OutputCoef(SIZE_Z);
 	cout << "[INFO] Initialize class Coefficient" << endl;
 
 	Source source;
