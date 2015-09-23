@@ -15,14 +15,14 @@ private:
 	double *psi_hy;
 
 public:
-	Update(int size1D);
+	Update();
 	~Update();
 
-	void Update1Dfield_e(double *Cex, int gridsize, int t);
-	void Update1Dfield_h(double *Chy, int gridsize, int t);
+	void Update1Dfield_e(double *Cex, int t);
+	void Update1Dfield_h(double *Chy, int t);
 
-	void Update1DCpml_ex(int size);
-	void Update1DCpml_hy(int size);
+	void Update1DCpml_ex();
+	void Update1DCpml_hy();
 
 	double *getex();
 	double *gethy();

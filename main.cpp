@@ -29,7 +29,7 @@ int main() {
 	coef.OutputCoef();
 	cout << "[INFO] Initialize class Coefficient" << endl;
 
-	Update updater(SIZE_Z);
+	Update updater;
 	double *ex = updater.getex();
 	double *hy = updater.gethy();
 	cout << "[INFO] Initialized class Update." << endl;
@@ -43,13 +43,13 @@ int main() {
 	//cout << "[INFO] Start entering the time loop." << endl;
 	for (int t = 0; t < 500; t++) {
 
-		updater.Update1Dfield_e(Cex, SIZE_Z, t);
+		updater.Update1Dfield_e(Cex, t);
 
-		updater.Update1DCpml_ex(SIZE_Z);
+		updater.Update1DCpml_ex();
 
-		updater.Update1Dfield_h(Chy, SIZE_Z-1, t);
+		updater.Update1Dfield_h(Chy, t);
 
-		updater.Update1DCpml_hy(SIZE_Z-1);
+		updater.Update1DCpml_hy();
 
 		for (int k = 0; k < SIZE_Z; k++) {
 			fprintf(snapshot, "%g ", ex[k]);
