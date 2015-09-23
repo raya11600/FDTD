@@ -37,6 +37,7 @@ public:
 
 	int 	getmode();
 	int 	gettotaltime();
+	int 	getstartGrid();
 
 	double 	getSource(int time);
 	void 	outputSettings();
