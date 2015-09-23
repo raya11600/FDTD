@@ -36,6 +36,7 @@ public:
 	~Coefficient();
 
 	void Init1DCoefWithCpml();
+	void Init3DCoefWithCpml();
 	void OutputCoef();
 
 	double *getCex();
