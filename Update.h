@@ -14,6 +14,18 @@ private:
 	double *psi_ex;
 	double *psi_hy;
 
+	void Alloc1DArray();
+
+	// 3D Field;
+	double ***Ex;
+	double ***Ey;
+	double ***Ez;
+	double ***Hx;
+	double ***Hy;
+	double ***Hz;
+	
+	void Alloc3DArray();
+
 public:
 	Update();
 	~Update();

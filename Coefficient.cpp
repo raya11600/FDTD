@@ -26,11 +26,11 @@ Coefficient::~Coefficient() {
 void Coefficient::InitBasicCoef1D(int size) {
 	// Coefficient for 1D update equation
 	for(int i = 0; i < size; i++) { 
-		Cex[i] = -c_e;
+		Cex[i] = c_e;
 	}
 
 	for(int i = 0; i < size-1; i++) { 
-		Chy[i] = -c_h;
+		Chy[i] = c_h;
 	}
 }
 

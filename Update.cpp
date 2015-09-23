@@ -9,18 +9,15 @@
 using namespace std;
 
 Update::Update() {
-	Parameter param;
+	Alloc1DArray();
+	Alloc3DArray();
+
+	/*Parameter param;
 	ArrayGenerator generator;
-
-	ex = generator.Alloc1DArray_double(param.SIZE1D);
-	hy = generator.Alloc1DArray_double(param.SIZE1D-1);
-
-	ex_now = generator.Alloc1DArray_double(param.SIZE1D);
-	ex_bef = generator.Alloc1DArray_double(param.SIZE1D);
-
-	psi_ex = generator.Alloc1DArray_double(param.SIZE1D);
-	psi_hy = generator.Alloc1DArray_double(param.SIZE1D-1);
-
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
+	Ex = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z);*/
 }
 
 Update::~Update() {
@@ -33,6 +30,72 @@ Update::~Update() {
 	delete[] psi_ex; psi_ex = NULL;
 	delete[] psi_hy; psi_hy = NULL;
 
+	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+
+	for( int i = 0; i < SIZE_X; i++ ) {
+		for( int j = 0; j < SIZE_Y; j++ ) {
+			if( i != SIZE_X-1 ) { 
+				delete[] Ex[i][j];
+				//delete[] Hy[i][j];
+			}
+			if( j != SIZE_Y-1 ) {
+				//delete[] Ey[i][j];
+				//delete[] Hx[i][j];
+			}
+			//delete[] Ez[i][j];
+			if( i != SIZE_X-1 && j != SIZE_Y-1 ) {
+				//delete[] Hz[i][j];
+			}
+		}
+		if( i != SIZE_X-1 ) {
+			delete[] Ex[i];
+			//delete[] Hy[i];
+			//delete[] Hz[i];
+		}
+		//delete[] Ey[i];
+		//delete[] Ez[i];
+		//delete[] Hx[i];
+	}
+	delete[] Ex; Ex = NULL;
+	//delete[] Ey; Ey = NULL;
+	//delete[] Ez; Ez = NULL;
+	//delete[] Hx; Hx = NULL;
+	//delete[] Hy; Hy = NULL;
+	//delete[] Hz; Hz = NULL;
+
+}
+
+void Update::Alloc1DArray() {
+	Parameter param;
+	ArrayGenerator generator;
+
+	ex = generator.Alloc1DArray_double(param.SIZE1D);
+	hy = generator.Alloc1DArray_double(param.SIZE1D-1);
+
+	ex_now = generator.Alloc1DArray_double(param.SIZE1D);
+	ex_bef = generator.Alloc1DArray_double(param.SIZE1D);
+
+	psi_ex = generator.Alloc1DArray_double(param.SIZE1D);
+	psi_hy = generator.Alloc1DArray_double(param.SIZE1D-1);
+}
+
+void Update::Alloc3DArray() {
+	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
+
+	ArrayGenerator generator;
+
+	Ex = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z);
+	/*Ey = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z);
+	Ez = generator.Alloc3DArray_double(SIZE_X, SIZE_Y, SIZE_Z-1);
+	Hx = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z-1);
+	Hy = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z-1);
+	Hz = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y-1, SIZE_Z);*/
+
 }
 
 void Update::Update1Dfield_e(double *Cex, int t) {
@@ -41,7 +104,7 @@ void Update::Update1Dfield_e(double *Cex, int t) {
 
 	// Update e field
 	for (int k = 1; k < SIZE1D-1; k++) {
-		ex_now[k] = ex[k] + Cex[k] * ( hy[k] - hy[k-1] );
+		ex_now[k] = ex[k] - Cex[k] * ( hy[k] - hy[k-1] );
 	}
 	
 	// Add Source
@@ -66,7 +129,7 @@ void Update::Update1Dfield_h(double *Chy, int t) {
 	int SIZE1D = param.SIZE1D;
 
 	for (int k = 0; k < SIZE1D-1; k++) {
-		hy[k] = hy[k] + Chy[k] * (ex[k+1] - ex[k]);
+		hy[k] = hy[k] - Chy[k] * (ex[k+1] - ex[k]);
 	}
 }
 
