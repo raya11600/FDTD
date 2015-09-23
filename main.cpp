@@ -18,21 +18,21 @@ int main() {
 
 	param.OutputParam();
 
+	Source source;
+	int Totaltime = source.gettotaltime();
+	source.outputSettings();
+
+	Coefficient coef;
+	coef.Init1DCoefWithCpml();
+	double *Cex = coef.getCex();
+	double *Chy = coef.getChy();
+	coef.OutputCoef();
+	cout << "[INFO] Initialize class Coefficient" << endl;
+
 	Update updater(SIZE_Z);
 	double *ex = updater.getex();
 	double *hy = updater.gethy();
 	cout << "[INFO] Initialized class Update." << endl;
-
-	Coefficient coef(SIZE_Z);
-	coef.Init1DCoefWithCpml(SIZE_Z);
-	double *Cex = coef.getCex();
-	double *Chy = coef.getChy();
-	coef.OutputCoef(SIZE_Z);
-	cout << "[INFO] Initialize class Coefficient" << endl;
-
-	Source source;
-	int Totaltime = source.gettotaltime();
-	source.outputSettings();
 
 	FILE *snapshot;
 	snapshot = fopen("data.log","w");

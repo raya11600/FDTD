@@ -9,15 +9,15 @@ private:
 	double *Cex;
 	double *Chy;
 
-	void InitBasicCoef1D(int size);
+	void InitBasicCoef1D(int SIZE1D);
 	void InitBasicCoef3D(int size_x, int size_y, int size_z);
 
 public:
-	Coefficient(int size1D);
+	Coefficient();
 	~Coefficient();
 
-	void Init1DCoefWithCpml(int size);
-	void OutputCoef(int size1D);
+	void Init1DCoefWithCpml();
+	void OutputCoef();
 
 	double *getCex();
 	double *getChy();

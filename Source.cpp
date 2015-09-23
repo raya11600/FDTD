@@ -88,7 +88,7 @@ int Source::gettotaltime() {
 }
 
 int Source::getstartGrid() {
-	return getstartGrid;
+	return startGrid;
 }
 
 double Source::getSource(int t) {
