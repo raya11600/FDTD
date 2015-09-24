@@ -406,7 +406,106 @@ void Update::Update3DCpml_E(int CPMLGrid, double *B_e, double *C_e) {
 }
 
 void Update::Update3DCpml_H(int CPMLGrid, double *B_h, double *C_h) {
+	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
 
+	for( int i = 0; i < SIZE_X; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				// psi_Hx_Ez
+				if( j >= 0 && j <= 0+CPMLGrid ) {
+					psi_Hx_Ez[i][j][k] = B_h[0+CPMLGrid-j] * psi_Hx_Ez[i][j][k] 
+									   + C_h[0+CPMLGrid-j] * (Ez[i][j+1][k] - Ez[i][j][k]) / param.dy;
+
+					Hx[i][j][k] -= (param.dt/param.mu0) * psi_Hx_Ez[i][j][k];
+				}
+				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
+					psi_Hx_Ez[i][j][k] = B_h[j-(SIZE_Y-2-CPMLGrid)] * psi_Hx_Ez[i][j][k]
+									   + C_h[j-(SIZE_Y-2-CPMLGrid)] * (Ez[i][j+1][k] - Ez[i][j][k]) / param.dy;
+
+					Hx[i][j][k] -= (param.dt/param.mu0) * psi_Hx_Ez[i][j][k];
+				}
+
+				// psi_Hx_Ey
+				if( k >= 0 && k <= 0+CPMLGrid ) {
+					psi_Hx_Ey[i][j][k] = B_h[0+CPMLGrid-k] * psi_Hx_Ey[i][j][k] 
+									   + C_h[0+CPMLGrid-k] * (Ey[i][j][k+1] - Ey[i][j][k]) / param.dz;
+
+					Hx[i][j][k] += (param.dt/param.mu0) * psi_Hx_Ey[i][j][k];
+				}
+				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
+					psi_Hx_Ey[i][j][k] = B_h[k-(SIZE_Z-2-CPMLGrid)] * psi_Hx_Ey[i][j][k]
+									   + C_h[k-(SIZE_Z-2-CPMLGrid)] * (Ey[i][j][k+1] - Ey[i][j][k]) / param.dz;
+
+					Hx[i][j][k] += (param.dt/param.mu0) * psi_Hx_Ey[i][j][k];
+				}
+			}
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				// psi_Hy_Ex
+				if( k >= 0 && k <= 0+CPMLGrid ) {
+					psi_Hy_Ex[i][j][k] = B_h[0+CPMLGrid-k] * psi_Hy_Ex[i][j][k] 
+									   + C_h[0+CPMLGrid-k] * (Ex[i][j][k+1] - Ex[i][j][k]) / param.dz;
+
+					Hy[i][j][k] -= (param.dt/param.mu0) * psi_Hy_Ex[i][j][k];
+				}
+				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
+					psi_Hy_Ex[i][j][k] = B_h[k-(SIZE_Z-2-CPMLGrid)] * psi_Hy_Ex[i][j][k] 
+									   + C_h[k-(SIZE_Z-2-CPMLGrid)] * (Ex[i][j][k+1] - Ex[i][j][k]) / param.dz;
+
+					Hy[i][j][k] -= (param.dt/param.mu0) * psi_Hy_Ex[i][j][k];
+				}
+
+				// psi_Hy_Ez
+				if( i >= 0 && i <= 0+CPMLGrid ) {
+					psi_Hy_Ez[i][j][k] = B_h[(0+CPMLGrid)-i] * psi_Hy_Ez[i][j][k] 
+									   + C_h[(0+CPMLGrid)-i] * (Ez[i+1][j][k] - Ez[i][j][k]) / param.dx;
+
+					Hy[i][j][k] += (param.dt/param.mu0) * psi_Hy_Ez[i][j][k];
+				}
+				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
+					psi_Hy_Ez[i][j][k] = B_h[i-(SIZE_X-2-CPMLGrid)] * psi_Hy_Ez[i][j][k] 
+									   + C_h[i-(SIZE_X-2-CPMLGrid)] * (Ez[i+1][j][k] - Ez[i][j][k]) / param.dx;
+
+					Hy[i][j][k] += (param.dt/param.mu0) * psi_Hy_Ez[i][j][k];
+				}
+			}
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z; k++ ) {
+				// psi_Hz_Ey
+				if( i >= 0 && i <= 0+CPMLGrid ) {
+					psi_Hz_Ey[i][j][k] = B_h[(0+CPMLGrid)-i] * psi_Hz_Ey[i][j][k] 
+									   + C_h[(0+CPMLGrid)-i] * ( Ey[i+1][j][k] - Ey[i][j][k] ) / param.dx; 
+					  
+					Hz[i][j][k] -= (param.dt/param.mu0) * psi_Hz_Ey[i][j][k];
+				}
+				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
+					psi_Hz_Ey[i][j][k] = B_h[i-(SIZE_X-2-CPMLGrid)] * psi_Hz_Ey[i][j][k] 
+									   + C_h[i-(SIZE_X-2-CPMLGrid)] * (Ey[i+1][j][k] - Ey[i][j][k]) / param.dx; 
+
+					Hz[i][j][k] -= (param.dt/param.mu0) * psi_Hz_Ey[i][j][k];
+				}
+
+				// psi_Hz_Ex
+				if( j >= 0 && j <= 0+CPMLGrid ) { 
+					psi_Hz_Ex[i][j][k] = B_h[0+CPMLGrid-j] * psi_Hz_Ex[i][j][k] 
+									   + C_h[0+CPMLGrid-j] * ( Ex[i][j+1][k] - Ex[i][j][k] ) / param.dy;
+
+					Hz[i][j][k] += (param.dt/param.mu0) * psi_Hz_Ex[i][j][k] ;
+				}  
+				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
+					psi_Hz_Ex[i][j][k] = B_h[j-(SIZE_Y-2-CPMLGrid)] * psi_Hz_Ex[i][j][k] 
+									   + C_h[j-(SIZE_Y-2-CPMLGrid)] * (Ex[i][j+1][k] - Ex[i][j][k]) / param.dy;
+					  
+					Hz[i][j][k] += (param.dt/param.mu0) * psi_Hz_Ex[i][j][k];
+				} 
+			}
 }
 
 double *Update::getex() {

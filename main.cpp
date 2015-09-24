@@ -64,7 +64,7 @@ int main() {
 	}
 	fprintf(snapshot, "\n");*/
 	//cout << "[INFO] Start entering the time loop." << endl;
-	for (int t = 0; t < 500; t++) {
+	for (int t = 0; t < 100; t++) {
 
 		updater.Update1Dfield_e(Cex, t);
 
@@ -72,7 +72,7 @@ int main() {
 
 		updater.Update3Dfield_E(Cexz, Cexy, Ceyx, Ceyz, Cezy, Cezx, t);
 	
-		updater.Update3DCpml_E();
+		//updater.Update3DCpml_E(CPMLGrid, B_e, C_e);
 
 		updater.Update1Dfield_h(Chy, t);
 
@@ -80,13 +80,13 @@ int main() {
 
 		updater.Update3Dfield_H(Chxz, Chxy, Chyx, Chyz, Chzy, Chzx, t);
 
-		updater.Update3DCpml_H();
+		//updater.Update3DCpml_H(CPMLGrid, B_h, C_h);
 
 		/*for (int k = 0; k < SIZE1D; k++) {
 			fprintf(snapshot, "%g ", ex[k]);
 		}
 		fprintf(snapshot, "\n");*/
-		if( (t+1) % 50 == 0 ) {
+		/*if( (t+1) % 50 == 0 ) {
 			FILE *file;
 			char filename[20];
 			sprintf(filename, "Ex_%d.log", t+1);
@@ -100,7 +100,7 @@ int main() {
 			}
 			fclose(file);
 			file = NULL;
-		}
+		}*/
 
 
 
