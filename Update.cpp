@@ -42,19 +42,19 @@ void Update::Alloc3DArray() {
 	Hy = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z-1);
 	Hz = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y-1, SIZE_Z);
 
-	//psi_Ex_Hz = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z);
-	//psi_Ex_Hy = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z);
-	//psi_Ey_Hx = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z);
-	//psi_Ey_Hz = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z);
+	psi_Ex_Hz = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z);
+	psi_Ex_Hy = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z);
+	psi_Ey_Hx = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z);
+	psi_Ey_Hz = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z);
 	psi_Ez_Hy = generator.Alloc3DArray_double(SIZE_X, SIZE_Y, SIZE_Z-1);
 	psi_Ez_Hx = generator.Alloc3DArray_double(SIZE_X, SIZE_Y, SIZE_Z-1);
 
-	//psi_Hx_Ez = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z-1);
-	//psi_Hx_Ey = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z-1);
-	//psi_Hy_Ex = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z-1);
-	//psi_Hy_Ez = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z-1);
-	//psi_Hz_Ey = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y-1, SIZE_Z);
-	//psi_Hz_Ex = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y-1, SIZE_Z);
+	psi_Hx_Ez = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z-1);
+	psi_Hx_Ey = generator.Alloc3DArray_double(SIZE_X, SIZE_Y-1, SIZE_Z-1);
+	psi_Hy_Ex = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z-1);
+	psi_Hy_Ez = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z-1);
+	psi_Hz_Ey = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y-1, SIZE_Z);
+	psi_Hz_Ex = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y-1, SIZE_Z);
 
 }
 
@@ -106,52 +106,52 @@ Update::~Update() {
 	for( int i = 0; i < SIZE_X; i++ ) {
 		for( int j = 0; j < SIZE_Y; j++ ) {
 			if( i != SIZE_X-1 ) { 
-				//delete[] psi_Ex_Hz[i][j];
-				//delete[] psi_Ex_Hy[i][j];
-				//delete[] psi_Hy_Ex[i][j];
-				//delete[] psi_Hy_Ez[i][j];
+				delete[] psi_Ex_Hz[i][j];
+				delete[] psi_Ex_Hy[i][j];
+				delete[] psi_Hy_Ex[i][j];
+				delete[] psi_Hy_Ez[i][j];
 			}
 			if( j != SIZE_Y-1 ) {
-				//delete[] psi_Ey_Hx[i][j];
-				//delete[] psi_Ey_Hz[i][j];
-				//delete[] psi_Hx_Ez[i][j];
-				//delete[] psi_Hx_Ey[i][j];
+				delete[] psi_Ey_Hx[i][j];
+				delete[] psi_Ey_Hz[i][j];
+				delete[] psi_Hx_Ez[i][j];
+				delete[] psi_Hx_Ey[i][j];
 			}
 			delete[] psi_Ez_Hy[i][j];
 			delete[] psi_Ez_Hx[i][j];
 			if( i != SIZE_X-1 && j != SIZE_Y-1 ) {
-				//delete[] psi_Hz_Ey[i][j];
-				//delete[] psi_Hz_Ex[i][j];
+				delete[] psi_Hz_Ey[i][j];
+				delete[] psi_Hz_Ex[i][j];
 			}
 		}
 		if( i != SIZE_X-1 ) {
-			//delete[] psi_Ex_Hz[i];
-			//delete[] psi_Ex_Hy[i];
-			//delete[] psi_Hy_Ex[i];
-			//delete[] psi_Hy_Ez[i];
-			//delete[] psi_Hz_Ey[i];
-			//delete[] psi_Hz_Ex[i];
+			delete[] psi_Ex_Hz[i];
+			delete[] psi_Ex_Hy[i];
+			delete[] psi_Hy_Ex[i];
+			delete[] psi_Hy_Ez[i];
+			delete[] psi_Hz_Ey[i];
+			delete[] psi_Hz_Ex[i];
 		}
-		//delete[] psi_Ey_Hx[i];
-		//delete[] psi_Ey_Hz[i];
+		delete[] psi_Ey_Hx[i];
+		delete[] psi_Ey_Hz[i];
 		delete[] psi_Ez_Hy[i];
 		delete[] psi_Ez_Hx[i];
-		//delete[] psi_Hx_Ez[i];
-		//delete[] psi_Hx_Ey[i];
+		delete[] psi_Hx_Ez[i];
+		delete[] psi_Hx_Ey[i];
 
 	}
-	//delete[] psi_Ex_Hz; psi_Ex_Hz = NULL;
-	//delete[] psi_Ex_Hy; psi_Ex_Hy = NULL;
-	//delete[] psi_Ey_Hx; psi_Ey_Hx = NULL;
-	//delete[] psi_Ey_Hz; psi_Ey_Hz = NULL;
+	delete[] psi_Ex_Hz; psi_Ex_Hz = NULL;
+	delete[] psi_Ex_Hy; psi_Ex_Hy = NULL;
+	delete[] psi_Ey_Hx; psi_Ey_Hx = NULL;
+	delete[] psi_Ey_Hz; psi_Ey_Hz = NULL;
 	delete[] psi_Ez_Hy; psi_Ez_Hy = NULL;
 	delete[] psi_Ez_Hx; psi_Ez_Hx = NULL;
-	//delete[] psi_Hx_Ez; psi_Hx_Ez = NULL;
-	//delete[] psi_Hx_Ey; psi_Hx_Ey = NULL;
-	//delete[] psi_Hy_Ex; psi_Hy_Ex = NULL;
-	//delete[] psi_Hy_Ez; psi_Hy_Ez = NULL;
-	//delete[] psi_Hz_Ey; psi_Hz_Ey = NULL;
-	//delete[] psi_Hz_Ex; psi_Hz_Ex = NULL;
+	delete[] psi_Hx_Ez; psi_Hx_Ez = NULL;
+	delete[] psi_Hx_Ey; psi_Hx_Ey = NULL;
+	delete[] psi_Hy_Ex; psi_Hy_Ex = NULL;
+	delete[] psi_Hy_Ez; psi_Hy_Ez = NULL;
+	delete[] psi_Hz_Ey; psi_Hz_Ey = NULL;
+	delete[] psi_Hz_Ex; psi_Hz_Ex = NULL;
 
 }
 
@@ -239,7 +239,8 @@ void Update::Update1DCpml_hy() {
 }
 
 void Update::Update3Dfield_E(double ***Cexz, double ***Cexy, double ***Ceyx,
-							 double ***Ceyz, double ***Cezy, double ***Cezx) {
+							 double ***Ceyz, double ***Cezy, double ***Cezx,
+							 int t) {
 	Parameter param;
 	int SIZE_X = param.SIZE_X;
 	int SIZE_Y = param.SIZE_Y;
@@ -272,11 +273,16 @@ void Update::Update3Dfield_E(double ***Cexz, double ***Cexy, double ***Ceyx,
 }
 
 void Update::Update3Dfield_H(double ***Chxz, double ***Chxy, double ***Chyx,
-							 double ***Chyz, double ***Chzy, double ***Chzx) {
+							 double ***Chyz, double ***Chzy, double ***Chzx,
+							 int t) {
 	Parameter param;
 	int SIZE_X = param.SIZE_X;
 	int SIZE_Y = param.SIZE_Y;
 	int SIZE_Z = param.SIZE_Z;
+
+	if( t == 1 ) {
+		Ex[SIZE_X/2][SIZE_Y/2][SIZE_Z/2] = 100;
+	}
 
 	for( int i = 0; i < SIZE_X; i++ )
 		for( int j = 0; j < SIZE_Y-1; j++ )
