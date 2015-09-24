@@ -72,7 +72,7 @@ int main() {
 
 		updater.Update3Dfield_E(Cexz, Cexy, Ceyx, Ceyz, Cezy, Cezx, t);
 	
-		//updater.Update3DCpml_E();
+		updater.Update3DCpml_E();
 
 		updater.Update1Dfield_h(Chy, t);
 
@@ -80,7 +80,7 @@ int main() {
 
 		updater.Update3Dfield_H(Chxz, Chxy, Chyx, Chyz, Chzy, Chzx, t);
 
-		//updater.Update3DCpml_H();
+		updater.Update3DCpml_H();
 
 		/*for (int k = 0; k < SIZE1D; k++) {
 			fprintf(snapshot, "%g ", ex[k]);

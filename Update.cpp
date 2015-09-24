@@ -302,6 +302,9 @@ void Update::Update3Dfield_H(double ***Chxz, double ***Chxy, double ***Chyx,
 
 void Update::Update3DCpml_E(int CPMLGrid, double *B_e, double *C_e) {
 	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
 
 	for( int i = 0; i < SIZE_X-1; i++ )
 		for( int j = 1; j < SIZE_Y-1; j++ )
@@ -318,7 +321,7 @@ void Update::Update3DCpml_E(int CPMLGrid, double *B_e, double *C_e) {
 					psi_Ex_Hz[i][j][k] = B_e[j-(SIZE_Y-2-CPMLGrid)] * psi_Ex_Hz[i][j][k]
 									   + C_e[j-(SIZE_Y-2-CPMLGrid)] * (Hz[i][j][k] - Hz[i][j-1][k]) / param.dy;
 					  
-					Ex[i][j][k] += (param.dt/param.eps0) * psi_Ex_Hz[i][j][k]; }
+					Ex[i][j][k] += (param.dt/param.eps0) * psi_Ex_Hz[i][j][k];
 				}
 			
 				// psi_Ex_Hy
@@ -347,17 +350,59 @@ void Update::Update3DCpml_E(int CPMLGrid, double *B_e, double *C_e) {
 					Ey[i][j][k] += (param.dt/param.eps0) * psi_Ey_Hx[i][j][k];
 				}
 				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
-					psi_Ey_Hx[i][j][k] = B_e[k-(SIZE_Z-2-CPMLGrid)] * psi_Ey_Hx[i][j][k] +
+					psi_Ey_Hx[i][j][k] = B_e[k-(SIZE_Z-2-CPMLGrid)] * psi_Ey_Hx[i][j][k]
 									   + C_e[k-(SIZE_Z-2-CPMLGrid)] * (Hx[i][j][k] - Hx[i][j][k-1]) / param.dz;
 
 					Ey[i][j][k] += (param.dt/param.eps0) * psi_Ey_Hx[i][j][k];
 				}
 
 				// psi_Ey_Hz
+				if( i >= 1 && i <= 1+CPMLGrid ) {
+					psi_Ey_Hz[i][j][k] = B_e[1+CPMLGrid-i] * psi_Ey_Hz[i][j][k] 
+									   + C_e[1+CPMLGrid-i] * (Hz[i][j][k] - Hz[i-1][j][k]) / param.dx;
+					
+					Ey[i][j][k] -= (param.dt/param.eps0) * psi_Ey_Hz[i][j][k];
+				}
+
+				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
+					psi_Ey_Hz[i][j][k] = B_e[i-(SIZE_X-2-CPMLGrid)] * psi_Ey_Hz[i][j][k]
+									   + C_e[i-(SIZE_X-2-CPMLGrid)] * (Hz[i][j][k] - Hz[i-1][j][k]) / param.dx;                          
+					
+					Ey[i][j][k] -= (param.dt/param.eps0) * psi_Ey_Hz[i][j][k];
+				}
 			}
 
+	for( int i = 1; i < SIZE_X-1; i++ )
+		for( int j = 1; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z; k++ ) {
+				// psi_Ez_Hy
+				if( i >= 1 && i <= 1+CPMLGrid ) {
+					psi_Ez_Hy[i][j][k] = B_e[1+CPMLGrid-i] * psi_Ez_Hy[i][j][k]
+									   + C_e[1+CPMLGrid-i] * (Hy[i][j][k] - Hy[i-1][j][k]) / param.dx;
 
+					Ez[i][j][k] += (param.dt/param.eps0) * psi_Ez_Hy[i][j][k];
+				}
+				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
+					psi_Ez_Hy[i][j][k] = B_e[i-(SIZE_X-2-CPMLGrid)] * psi_Ez_Hy[i][j][k]
+									   + C_e[i-(SIZE_X-2-CPMLGrid)] * (Hy[i][j][k] - Hy[i-1][j][k]) / param.dx;                          
+					
+					Ez[i][j][k] = Ez[i][j][k] + (param.dt/param.eps0)  *  psi_Ez_Hy[i][j][k];
+				}
 
+				// psi_Ez_Hx
+				if( j >= 1 && j <= 1+CPMLGrid ) {
+					psi_Ez_Hx[i][j][k] = B_e[CPMLGrid+1-j] * psi_Ez_Hx[i][j][k]
+									   + C_e[CPMLGrid+1-j] * (Hx[i][j][k] - Hx[i][j-1][k]) / param.dy;
+
+					Ez[i][j][k] -= (param.dt/param.eps0) * psi_Ez_Hx[i][j][k];
+				}
+				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
+					psi_Ez_Hx[i][j][k] = B_e[j-(SIZE_Y-2-CPMLGrid)] * psi_Ez_Hx[i][j][k]
+									   + C_e[j-(SIZE_Y-2-CPMLGrid)] * (Hx[i][j][k] - Hx[i][j-1][k]) / param.dy;
+
+					Ez[i][j][k] -= (param.dt/param.eps0) * psi_Ez_Hx[i][j][k];
+				}
+			}
 }
 
 void Update::Update3DCpml_H(int CPMLGrid, double *B_h, double *C_h) {
