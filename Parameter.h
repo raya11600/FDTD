@@ -25,6 +25,8 @@ public:
 
 	// Space grid parameters
 	double dx;
+	double dy;
+	double dz;
 
 	int SIZE_X;
 	int SIZE_Y;

@@ -25,6 +25,8 @@ void Parameter::InitSpaceParam() {
 	// Space grid parameters
 	mesh = 3.0; //nm
 	dx = mesh * (1e-9);
+	dy = dx;
+	dz = dx;
 
 	x_domain = 300; //nm
 	y_domain = 300; //nm

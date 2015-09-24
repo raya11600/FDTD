@@ -48,8 +48,8 @@ public:
 	void Update1Dfield_e(double *Cex, int t);
 	void Update1Dfield_h(double *Chy, int t);
 
-	void Update1DCpml_ex();
-	void Update1DCpml_hy();
+	void Update1DCpml_ex(int CPMLGrid, double *B_e, double *C_e);
+	void Update1DCpml_hy(int CPMLGrid, double *B_h, double *C_h);
 
 	void Update3Dfield_E(double ***Cexz, double ***Cexy, double ***Ceyx,
 						 double ***Ceyz, double ***Cezy, double ***Cezx,
@@ -58,8 +58,8 @@ public:
 						 double ***Chyz, double ***Chzy, double ***Chzx,
 						 int t);
 
-	void Update3DCpml_E();
-	void Update3DCpml_H();
+	void Update3DCpml_E(int CPMLGrid, double *B_e, double *C_e);
+	void Update3DCpml_H(int CPMLGrid, double *B_h, double *C_h);
 
 	double *getex();
 	double *gethy();

@@ -4,6 +4,7 @@
 #include "Update.h"
 #include "Coefficient.h"
 #include "Source.h"
+#include "CPML.h"
 #include "Parameter.h"
 using namespace std;
 
@@ -21,6 +22,13 @@ int main() {
 	Source source;
 	int Totaltime = source.gettotaltime();
 	source.outputSettings();
+
+	CPML cpml;
+	int CPMLGrid = cpml.getCPMLGrid();
+	double *B_e = cpml.getB_e();
+	double *B_h = cpml.getB_h();
+	double *C_e = cpml.getC_e();
+	double *C_h = cpml.getC_h();
 
 	Coefficient coef;
 	coef.Init1DCoefWithCpml();
@@ -60,15 +68,19 @@ int main() {
 
 		updater.Update1Dfield_e(Cex, t);
 
-		updater.Update1DCpml_ex();
+		updater.Update1DCpml_ex(CPMLGrid, B_e, C_e);
 
 		updater.Update3Dfield_E(Cexz, Cexy, Ceyx, Ceyz, Cezy, Cezx, t);
 	
+		//updater.Update3DCpml_E();
+
 		updater.Update1Dfield_h(Chy, t);
 
-		updater.Update1DCpml_hy();
+		updater.Update1DCpml_hy(CPMLGrid, B_h, C_h);
 
 		updater.Update3Dfield_H(Chxz, Chxy, Chyx, Chyz, Chzy, Chzx, t);
+
+		//updater.Update3DCpml_H();
 
 		/*for (int k = 0; k < SIZE1D; k++) {
 			fprintf(snapshot, "%g ", ex[k]);

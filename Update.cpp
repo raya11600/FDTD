@@ -190,38 +190,28 @@ void Update::Update1Dfield_h(double *Chy, int t) {
 	}
 }
 
-void Update::Update1DCpml_ex() {
+void Update::Update1DCpml_ex(int CPMLGrid, double *B_e, double *C_e) {
 	Parameter param;
 	int SIZE1D = param.SIZE1D;
 
-	CPML cpml;
-	int CPMLGrid = cpml.getCPMLGrid();
-	double *B_e = cpml.getB_e();
-	double *C_e = cpml.getC_e();
-
-	for( int k = 0; k < SIZE1D; k++ ) {
+	for( int k = 1; k < SIZE1D-1; k++ ) {
 		if( k >= 1 && k <= 1+CPMLGrid ) {
 			psi_ex[k] = B_e[CPMLGrid+1-k] * psi_ex[k] + 
 						C_e[CPMLGrid+1-k] * (hy[k] - hy[k-1]) / param.dx; 
 			ex[k] = ex[k] - (param.dt/param.eps0) * psi_ex[k];
 		}
 		if( k >= SIZE1D-2-CPMLGrid && k <= SIZE1D-2 ) {
-			psi_ex[k] = B_e[k-(SIZE1D-2-CPMLGrid)] * psi_ex[k] +
-						C_e[k-(SIZE1D-2-CPMLGrid)] * (hy[k] - hy[k-1]) / param.dx;
+			psi_ex[k] = B_e[k-(SIZE1D-2-CPMLGrid)] * psi_ex[k]
+					  + C_e[k-(SIZE1D-2-CPMLGrid)] * (hy[k] - hy[k-1]) / param.dx;
 			ex[k] = ex[k] - (param.dt/param.eps0) * psi_ex[k];
 		}
 	}
 
 }
 
-void Update::Update1DCpml_hy() {
+void Update::Update1DCpml_hy(int CPMLGrid, double *B_h, double *C_h) {
 	Parameter param;
 	int SIZE1D = param.SIZE1D;
-
-	CPML cpml;
-	int CPMLGrid = cpml.getCPMLGrid();
-	double *B_h = cpml.getB_h();
-	double *C_h = cpml.getC_h();
 
 	for( int k = 0; k < SIZE1D-1; k++ ) {
 		if( k >= 0 && k <= 0+CPMLGrid ) {
@@ -230,8 +220,8 @@ void Update::Update1DCpml_hy() {
 			hy[k] = hy[k] - (param.dt/param.mu0) * psi_hy[k];
 		}
 		if( k >= SIZE1D-2-CPMLGrid && k <= SIZE1D-2 ) {
-			psi_hy[k] = B_h[k-(SIZE1D-2-CPMLGrid)] * psi_hy[k] +
-						C_h[k-(SIZE1D-2-CPMLGrid)] * (ex[k+1] - ex[k]) / param.dx;
+			psi_hy[k] = B_h[k-(SIZE1D-2-CPMLGrid)] * psi_hy[k] 
+					  + C_h[k-(SIZE1D-2-CPMLGrid)] * (ex[k+1] - ex[k]) / param.dx;
 			hy[k] = hy[k] - (param.dt/param.mu0) * psi_hy[k];
 		}
 	}
@@ -310,11 +300,67 @@ void Update::Update3Dfield_H(double ***Chxz, double ***Chxy, double ***Chyx,
 
 }
 
-void Update3DCpml_E() {
+void Update::Update3DCpml_E(int CPMLGrid, double *B_e, double *C_e) {
+	Parameter param;
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 1; j < SIZE_Y-1; j++ )
+			for( int k = 1; k < SIZE_Z-1; k++ ) {
+				// psi_Ex_Hz
+				if( j >= 1 && j <= 1+CPMLGrid ) {
+					psi_Ex_Hz[i][j][k] = B_e[1+CPMLGrid-j] * psi_Ex_Hz[i][j][k]
+					  				   + C_e[1+CPMLGrid-j] * (Hz[i][j][k] - Hz[i][j-1][k]) / param.dy;
+					
+					Ex[i][j][k] += (param.dt/param.eps0) * psi_Ex_Hz[i][j][k];
+				}
+
+				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Z-2 ) {
+					psi_Ex_Hz[i][j][k] = B_e[j-(SIZE_Y-2-CPMLGrid)] * psi_Ex_Hz[i][j][k]
+									   + C_e[j-(SIZE_Y-2-CPMLGrid)] * (Hz[i][j][k] - Hz[i][j-1][k]) / param.dy;
+					  
+					Ex[i][j][k] += (param.dt/param.eps0) * psi_Ex_Hz[i][j][k]; }
+				}
+			
+				// psi_Ex_Hy
+				if( k >= 1 && k <= 1+CPMLGrid ) {
+					psi_Ex_Hy[i][j][k] = B_e[1+CPMLGrid-k] * psi_Ex_Hy[i][j][k]
+									   + C_e[1+CPMLGrid-k] * (Hy[i][j][k] - Hy[i][j][k-1]) / param.dz;
+
+					Ex[i][j][k] -= (param.dt/param.eps0) * psi_Ex_Hy[i][j][k];
+				}
+				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
+					psi_Ex_Hy[i][j][k] = B_e[k-(SIZE_Z-2-CPMLGrid)] * psi_Ex_Hy[i][j][k]
+									   + C_e[k-(SIZE_Z-2-CPMLGrid)] * (Hy[i][j][k] - Hy[i][j][k-1]) / param.dz;
+
+					Ex[i][j][k] -= (param.dt/param.eps0) * psi_Ex_Hy[i][j][k];
+				}
+			}
+
+	for( int i = 1; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y; j++ )
+			for( int k = 1; k < SIZE_Z-1; k++ ) {
+				// psi_Ey_Hx
+				if( k >= 1 && k <= 1+CPMLGrid ) {
+					psi_Ey_Hx[i][j][k] = B_e[1+CPMLGrid-k] * psi_Ey_Hx[i][j][k]
+									   + C_e[1+CPMLGrid-k] * (Hx[i][j][k] - Hx[i][j][k-1]) / param.dz;
+
+					Ey[i][j][k] += (param.dt/param.eps0) * psi_Ey_Hx[i][j][k];
+				}
+				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
+					psi_Ey_Hx[i][j][k] = B_e[k-(SIZE_Z-2-CPMLGrid)] * psi_Ey_Hx[i][j][k] +
+									   + C_e[k-(SIZE_Z-2-CPMLGrid)] * (Hx[i][j][k] - Hx[i][j][k-1]) / param.dz;
+
+					Ey[i][j][k] += (param.dt/param.eps0) * psi_Ey_Hx[i][j][k];
+				}
+
+				// psi_Ey_Hz
+			}
+
+
 
 }
 
-void Update3DCpml_H() {
+void Update::Update3DCpml_H(int CPMLGrid, double *B_h, double *C_h) {
 
 }
 
