@@ -340,7 +340,7 @@ void Update::Update3DCpml_E(int CPMLGrid, double *B_e, double *C_e) {
 			}
 
 	for( int i = 1; i < SIZE_X-1; i++ )
-		for( int j = 0; j < SIZE_Y; j++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
 			for( int k = 1; k < SIZE_Z-1; k++ ) {
 				// psi_Ey_Hx
 				if( k >= 1 && k <= 1+CPMLGrid ) {
@@ -374,7 +374,7 @@ void Update::Update3DCpml_E(int CPMLGrid, double *B_e, double *C_e) {
 
 	for( int i = 1; i < SIZE_X-1; i++ )
 		for( int j = 1; j < SIZE_Y-1; j++ )
-			for( int k = 0; k < SIZE_Z; k++ ) {
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
 				// psi_Ez_Hy
 				if( i >= 1 && i <= 1+CPMLGrid ) {
 					psi_Ez_Hy[i][j][k] = B_e[1+CPMLGrid-i] * psi_Ez_Hy[i][j][k]
