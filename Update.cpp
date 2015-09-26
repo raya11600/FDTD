@@ -508,6 +508,28 @@ void Update::Update3DCpml_H(int CPMLGrid, double *B_h, double *C_h) {
 			}
 }
 
+void Update::OutputEx(int t) {
+	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
+
+	if( (t+1) % 50 == 0 ) {
+		FILE *file;
+		char filename[20];
+		sprintf(filename, "Ex_%d.log", t+1);
+		file = fopen(filename, "w");
+		for( int j = 0; j < SIZE_Y; j++ ) {
+			for( int i = 0; i < SIZE_X-1; i++ ) {
+				fprintf(file, "%g ", Ex[i][j][SIZE_Z/2]);
+			}
+			fprintf(file, "\n");
+		}
+		fclose(file);
+		file = NULL;
+	}
+}
+
 double *Update::getex() {
 	return ex;
 }

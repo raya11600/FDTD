@@ -64,7 +64,7 @@ int main() {
 	}
 	fprintf(snapshot, "\n");*/
 	//cout << "[INFO] Start entering the time loop." << endl;
-	for (int t = 0; t < 100; t++) {
+	for (int t = 0; t < 500; t++) {
 
 		updater.Update1Dfield_e(Cex, t);
 
@@ -86,22 +86,7 @@ int main() {
 			fprintf(snapshot, "%g ", ex[k]);
 		}
 		fprintf(snapshot, "\n");*/
-		/*if( (t+1) % 50 == 0 ) {
-			FILE *file;
-			char filename[20];
-			sprintf(filename, "Ex_%d.log", t+1);
-			file = fopen(filename, "w");
-			for( int i = 0; i < SIZE_X-1; i++ ) {
-				for( int j = 0; j < SIZE_Y; j++ ) {
-					int k = SIZE_Z/2;
-					fprintf(file, "%g ", Ex[i][j][k]);
-				}
-				fprintf(file, "\n");
-			}
-			fclose(file);
-			file = NULL;
-		}*/
-
+		updater.OutputEx(t);
 
 
 	}
