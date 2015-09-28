@@ -15,8 +15,6 @@ for i in range(500):
 	if i > 1 and i % 50 == 0:
 		name = "Ex_" + str(i) 
 		data = np.loadtxt( name + ".log" )
-		len(data[0])
-		len(data)
 		x = np.arange(len(data[0])+1)
 		y = np.arange(len(data)+1)
 		X, Y = np.meshgrid(x, y)
