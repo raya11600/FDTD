@@ -95,7 +95,7 @@ int main() {
 			fprintf(snapshot, "%g ", ex[k]);
 		}
 		fprintf(snapshot, "\n");*/
-		updater.OutputEx(t);
+		updater.OutputEx_YZPlane(t);
 
 
 	}

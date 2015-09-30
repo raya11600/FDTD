@@ -273,10 +273,6 @@ void Update::Update3Dfield_H(double ***Chxz, double ***Chxy, double ***Chyx,
 	int SIZE_Y = param.SIZE_Y;
 	int SIZE_Z = param.SIZE_Z;
 
-	if( t == 1 ) {
-		Ex[SIZE_X/2][SIZE_Y/2][SIZE_Z/2] = 100;
-	}
-
 	for( int i = 0; i < SIZE_X; i++ )
 		for( int j = 0; j < SIZE_Y-1; j++ )
 			for( int k = 0; k < SIZE_Z-1; k++ ) {
@@ -511,7 +507,7 @@ void Update::Update3DCpml_H(int CPMLGrid, double *B_h, double *C_h) {
 			}
 }
 
-void Update::OutputEx(int t) {
+void Update::OutputEx_XYPlane(int t) {
 	Parameter param;
 	int SIZE_X = param.SIZE_X;
 	int SIZE_Y = param.SIZE_Y;
@@ -525,6 +521,28 @@ void Update::OutputEx(int t) {
 		for( int j = 0; j < SIZE_Y; j++ ) {
 			for( int i = 0; i < SIZE_X-1; i++ ) {
 				fprintf(file, "%g ", Ex[i][j][SIZE_Z/2]);
+			}
+			fprintf(file, "\n");
+		}
+		fclose(file);
+		file = NULL;
+	}
+}
+
+void Update::OutputEx_YZPlane(int t) {
+	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
+
+	if( (t+1) % 50 == 0 ) {
+		FILE *file;
+		char filename[20];
+		sprintf(filename, "Ex_%d.log", t+1);
+		file = fopen(filename, "w");
+		for( int k = 0; k < SIZE_Z; k++ ) {
+			for( int j = 0; j < SIZE_Y; j++ ) {
+				fprintf(file, "%g ", Ex[SIZE_X/2][j][k]);
 			}
 			fprintf(file, "\n");
 		}
