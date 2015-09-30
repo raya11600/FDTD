@@ -64,7 +64,7 @@ int main() {
 	}
 	fprintf(snapshot, "\n");*/
 	//cout << "[INFO] Start entering the time loop." << endl;
-	for (int t = 0; t < 500; t++) {
+	for (int t = 0; t < 1000; t++) {
 
 		updater.Update1Dfield_e(Cex, t);
 
@@ -73,6 +73,18 @@ int main() {
 		updater.Update3Dfield_E(Cexz, Cexy, Ceyx, Ceyz, Cezy, Cezx, t);
 	
 		updater.Update3DCpml_E(CPMLGrid, B_e, C_e);
+
+		int TFSF = CPML+5;
+		int startZ = TFSF - 1;
+		int k = startZ;
+		for( int i = 0; i < SIZE_X-1; i++ )
+		  for( int j = 0; j < SIZE_Y-1; j++ )
+		  { 
+		    if(rank_Ex[i][j][k]==3)
+		    { Ex[i][j][k] += (dt/dx/eps0) * hy[k]; }
+		    else
+		    { Ex[i][j][k] += (dt/dx/eps0) * hy[k]; }
+		  }
 
 		updater.Update1Dfield_h(Chy, t);
 

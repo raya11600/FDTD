@@ -193,74 +193,131 @@ void Coefficient::Init3DCoefWithCpml() {
 	double *kappa_e = cpml.getkappa_e();
 	double *kappa_h = cpml.getkappa_h();
 
-	for( int i = 1; i < SIZE_X-1; i++ )
+	// Ex
+	for( int i = 0; i < SIZE_X-1; i++ )
 		for( int j = 1; j < SIZE_Y-1; j++ )
 			for( int k = 1; k < SIZE_Z-1;k++) {
-				// Cexz, Cezx
+				// Cexz
 				if( j >= 1 && j <= 1+CPMLGrid ) {
 					Cexz[i][j][k] /= kappa_e[1+CPMLGrid-j];
-					Cezx[i][j][k] /= kappa_e[1+CPMLGrid-j];
 				}
 				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
 					Cexz[i][j][k] /= kappa_e[j-(SIZE_Y-2-CPMLGrid)];
-					Cezx[i][j][k] /= kappa_e[j-(SIZE_Y-2-CPMLGrid)];
 				}
 
-				// Cexy, Ceyx
+				// Cexy
 				if( k >= 1 && k <= 1+CPMLGrid ) {
 					Cexy[i][j][k] /= kappa_e[1+CPMLGrid-k];
-					Ceyx[i][j][k] /= kappa_e[1+CPMLGrid-k];
 				}
 				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
 					Cexy[i][j][k] /= kappa_e[k-(SIZE_Z-2-CPMLGrid)];
+				}
+			}
+
+	// Ey
+	for( int i = 1; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 1; k < SIZE_Z-1;k++) {
+				// Ceyx
+				if( k >= 1 && k <= 1+CPMLGrid ) {
+					Ceyx[i][j][k] /= kappa_e[1+CPMLGrid-k];
+				}
+				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
 					Ceyx[i][j][k] /= kappa_e[k-(SIZE_Z-2-CPMLGrid)];
 				}
 
-				// Ceyz, Cezy
+				// Ceyz
 				if( i >= 1 && i <= 1+CPMLGrid ) {
 					Ceyz[i][j][k] /= kappa_e[1+CPMLGrid-i];
-					Cezy[i][j][k] /= kappa_e[1+CPMLGrid-i];
 				}
 				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
 					Ceyz[i][j][k] /= kappa_e[i-(SIZE_X-2-CPMLGrid)];
-					Cezy[i][j][k] /= kappa_e[i-(SIZE_X-2-CPMLGrid)];
 				}
 			}
 
-	for( int i = 0; i < SIZE_X-1; i++ )
+	// Ez
+	for( int i = 1; i < SIZE_X-1; i++ )
+		for( int j = 1; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z-1;k++) {
+				// Cezy
+				if( i >= 1 && i <= 1+CPMLGrid ) {
+					Cezy[i][j][k] /= kappa_e[1+CPMLGrid-i];
+				}
+				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
+					Cezy[i][j][k] /= kappa_e[i-(SIZE_X-2-CPMLGrid)];
+				}
+
+				// Cezx
+				if( j >= 1 && j <= 1+CPMLGrid ) {
+					Cezx[i][j][k] /= kappa_e[1+CPMLGrid-j];
+				}
+				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
+					Cezx[i][j][k] /= kappa_e[j-(SIZE_Y-2-CPMLGrid)];
+				}
+			}
+
+	// Hx
+	for( int i = 0; i < SIZE_X; i++ )
 		for( int j = 0; j < SIZE_Y-1; j++ )
 			for( int k = 0; k < SIZE_Z-1; k++ ) {
-				// Chxz, Chzx
+				// Chxz
 				if( j >= 0 && j <= 0+CPMLGrid ) {
 					Chxz[i][j][k] /= kappa_h[0+CPMLGrid-j];
-					Chzx[i][j][k] /= kappa_h[0+CPMLGrid-j];
 				}
 				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
 					Chxz[i][j][k] /= kappa_h[j-(SIZE_Y-2-CPMLGrid)];
-					Chzx[i][j][k] /= kappa_h[j-(SIZE_Y-2-CPMLGrid)];
 				}
 
-				// Chxy, Chyx
+				// Chxy
 				if( k >= 0 && k <= 0+CPMLGrid ) {
 					Chxy[i][j][k] /= kappa_h[0+CPMLGrid-k];
-					Chyx[i][j][k] /= kappa_h[0+CPMLGrid-k];
 				}
 				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
 					Chxy[i][j][k] /= kappa_h[k-(SIZE_Z-2-CPMLGrid)];
+				}
+			}
+
+	// Hy
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				// Chyx
+				if( k >= 0 && k <= 0+CPMLGrid ) {
+					Chyx[i][j][k] /= kappa_h[0+CPMLGrid-k];
+				}
+				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
 					Chyx[i][j][k] /= kappa_h[k-(SIZE_Z-2-CPMLGrid)];
 				}
 
-				// Chyz, Chzy
+				// Chyz
 				if( i >= 0 && i <= 0+CPMLGrid ) {
 					Chyz[i][j][k] /= kappa_h[0+CPMLGrid-i];
-					Chzy[i][j][k] /= kappa_h[0+CPMLGrid-i];
 				}
 				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
-					Chyz[i][j][k] /= kappa_h[i-(SIZE_X-2-CPMLGrid)];
 					Chyz[i][j][k] /= kappa_h[i-(SIZE_X-2-CPMLGrid)];
 				}
 			}
 
+	// Hz
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z; k++ ) {
+				// Chzy
+				if( i >= 0 && i <= 0+CPMLGrid ) {
+					Chzy[i][j][k] /= kappa_h[0+CPMLGrid-i];
+				}
+				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
+					Chzy[i][j][k] /= kappa_h[i-(SIZE_X-2-CPMLGrid)];
+				}
+
+				// Chzx
+				if( j >= 0 && j <= 0+CPMLGrid ) {
+					Chzx[i][j][k] /= kappa_h[0+CPMLGrid-j];
+				}
+				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
+					Chzx[i][j][k] /= kappa_h[j-(SIZE_Y-2-CPMLGrid)];
+				}
+			}
 }
 
 void Coefficient::OutputCoef() {
