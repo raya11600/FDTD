@@ -164,9 +164,12 @@ void Update::Update1Dfield_e(double *Cex, int t) {
 		ex_now[k] = ex[k] - Cex[k] * ( hy[k] - hy[k-1] );
 	}
 	
+	int TFSF = 20+5;
+	int startZ = TFSF - 1;
+	int k = startZ;
 	// Add Source
 	Source source;
-	ex_now[SIZE1D/2] = source.getSource(t);
+	ex_now[startZ] = source.getSource(t);
 
 	//if ( t == 1 ) {
 	//	ex_now[50] = 1;

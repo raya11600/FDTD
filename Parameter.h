@@ -1,8 +1,6 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
 
-#define startZ 3
-
 class Parameter {
 private:
 	// Space grid parameters

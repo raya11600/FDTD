@@ -52,8 +52,8 @@ int main() {
 	cout << "[INFO] Initialize class Coefficient" << endl;
 
 	Update updater;
-	//double *ex = updater.getex();
-	//double *hy = updater.gethy();
+	double *ex = updater.getex();
+	double *hy = updater.gethy();
 	double ***Ex = updater.getEx();
 	cout << "[INFO] Initialized class Update." << endl;
 
@@ -74,16 +74,13 @@ int main() {
 	
 		updater.Update3DCpml_E(CPMLGrid, B_e, C_e);
 
-		int TFSF = CPML+5;
+		int TFSF = CPMLGrid+5;
 		int startZ = TFSF - 1;
 		int k = startZ;
 		for( int i = 0; i < SIZE_X-1; i++ )
-		  for( int j = 0; j < SIZE_Y-1; j++ )
+		  for( int j = 1; j < SIZE_Y-1; j++ )
 		  { 
-		    if(rank_Ex[i][j][k]==3)
-		    { Ex[i][j][k] += (dt/dx/eps0) * hy[k]; }
-		    else
-		    { Ex[i][j][k] += (dt/dx/eps0) * hy[k]; }
+		    Ex[i][j][k] += (param.dt/param.dx/param.eps0) * hy[k];
 		  }
 
 		updater.Update1Dfield_h(Chy, t);
