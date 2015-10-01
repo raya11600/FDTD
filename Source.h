@@ -3,7 +3,7 @@
 
 class Source {
 private:
-	int		mode;
+	int		SourceMode;
 	int 	totaltime;
 
 	int 	startGrid;
@@ -35,7 +35,7 @@ public:
 	Source();
 	~Source();
 
-	int 	getmode();
+	int 	getSourceMode();
 	int 	gettotaltime();
 	int 	getstartGrid();
 

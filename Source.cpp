@@ -6,13 +6,13 @@
 using namespace std;
 
 Source::Source() {
-	mode = 1;
+	SourceMode = 1;
 	startGrid = 0;
 
-	if( mode == 1 ) {
+	if( SourceMode == 1 ) {
 		InitSineWave();
 	}
-	else if( mode == 2 ) {
+	else if( SourceMode == 2 ) {
 		InitGaussianWave();
 	}
 	else {
@@ -79,8 +79,8 @@ void Source::InitGaussianWave() {
 
 }
 
-int Source::getmode() {
-	return mode;
+int Source::getSourceMode() {
+	return SourceMode;
 }
 
 int Source::gettotaltime() {
@@ -94,10 +94,10 @@ int Source::getstartGrid() {
 double Source::getSource(int t) {
 	Parameter param;
 
-	if( mode == 1 ) {
+	if( SourceMode == 1 ) {
 		return sin( angularFreq * param.dt * t );
 	}
-	else if ( mode == 2 ) {
+	else if ( SourceMode == 2 ) {
 		int t0=totaltime/2;
 		return	1.0 / gaussian_width
 				* exp(-param.PI * (t-t0)*param.dt/gaussian_width * (t-t0)*param.dt/gaussian_width )
@@ -112,10 +112,10 @@ void Source::outputSettings() {
 	FILE *file;
 	file = fopen("source.data", "w");
 	fprintf(file, "===== Source Data Output =====\n");
-	if( mode == 1 ) {
+	if( SourceMode == 1 ) {
 		fprintf(file, "Mode = Sine Wave\n");
 	}
-	else if( mode == 2 ) {
+	else if( SourceMode == 2 ) {
 		fprintf(file, "Mode = Gaussian Wave\n");
 	}
 	fprintf(file, "Total time steps = %i\n", totaltime);
@@ -124,7 +124,7 @@ void Source::outputSettings() {
 	fprintf(file, "\n");
 	fprintf(file, "\n");
 	
-	if( mode == 1 ) {
+	if( SourceMode == 1 ) {
 		fprintf(file, "--Sine Wave Detail--\n");
 		fprintf(file, "Wavelength = %g m => Frequency = %g\n", wavelength, sourceFreq);
 		fprintf(file, "Period number = %i\n", sourcePeriod);
@@ -136,7 +136,7 @@ void Source::outputSettings() {
 		fprintf(file, "\n");
 		fprintf(file, "\n");
 	}
-	else if( mode == 2 ) {
+	else if( SourceMode == 2 ) {
 		fprintf(file, "--Gaussian Wave Detail--\n");
 		fprintf(file, "Sample number = %i\n", frequency_sample);
 		fprintf(file, "\n");
