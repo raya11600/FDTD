@@ -1,6 +1,8 @@
 #ifndef TFSF_H
 #define TFSF_H
 
+#include "Source.h"
+
 class TFSF {
 private:
 	int TFSFGrid;
@@ -15,6 +17,9 @@ private:
 public:
 	TFSF(int CPMLGrid);
 	~TFSF();
+	
+	// 1D Source
+	void Add1DSource(double *ex, Source *source, int t);
 
 	// XYPlane
 		// TFSF boundary is just an x-y plane with no source end.

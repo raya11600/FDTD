@@ -7,8 +7,6 @@ private:
 	double *ex;
 	double *hy;
 
-	double *ex_now;
-	double *ex_bef;
 	double ex_bef_start;
 	double ex_bef_end;
 

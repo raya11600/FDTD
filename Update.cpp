@@ -156,6 +156,7 @@ void Update::Update1Dfield_e(double *Cex, int t) {
 	Parameter param;
 	int SIZE1D = param.SIZE1D;
 
+	// Update ex
 	for( int k = 1; k < SIZE1D; k++ ) {
 		ex[k] = ex[k] - Cex[k] * ( hy[k] - hy[k-1] );
 	}
@@ -168,12 +169,6 @@ void Update::Update1Dfield_e(double *Cex, int t) {
 	// Update edges info
 	ex_bef_start 	= ex[1];
 	ex_bef_end 		= ex[SIZE1D-2];
-
-	int TFSF = 20+5;
-	int startZ = TFSF - 1;
-
-	Source source;
-	ex[startZ] = source.getSource(t);
 
 }
 

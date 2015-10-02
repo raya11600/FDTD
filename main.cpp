@@ -78,23 +78,25 @@ int main() {
 
 		updater.Update1Dfield_e(Cex, t);
 
+		tfsf.Add1DSource(ex, &source, t);
+
 		updater.Update1DCpml_ex(CPMLGrid, B_e, C_e);
 
-		//updater.Update3Dfield_E(Cexz, Cexy, Ceyx, Ceyz, Cezy, Cezx, t);
+		updater.Update3Dfield_E(Cexz, Cexy, Ceyx, Ceyz, Cezy, Cezx, t);
 	
-		//updater.Update3DCpml_E(CPMLGrid, B_e, C_e);
+		updater.Update3DCpml_E(CPMLGrid, B_e, C_e);
 
-		//tfsf.AddTfsf_Box_E(Ex, Ey, Ez, hy);
+		tfsf.AddTfsf_Box_E(Ex, Ey, Ez, hy);
 
 		updater.Update1Dfield_h(Chy, t);
 
 		updater.Update1DCpml_hy(CPMLGrid, B_h, C_h);
 
-		//updater.Update3Dfield_H(Chxz, Chxy, Chyx, Chyz, Chzy, Chzx, t);
+		updater.Update3Dfield_H(Chxz, Chxy, Chyx, Chyz, Chzy, Chzx, t);
 
-		//updater.Update3DCpml_H(CPMLGrid, B_h, C_h);
+		updater.Update3DCpml_H(CPMLGrid, B_h, C_h);
 
-		//tfsf.AddTfsf_Box_H(Hx, Hy, Hz, ex);
+		tfsf.AddTfsf_Box_H(Hx, Hy, Hz, ex);
 
 		for (int k = 0; k < SIZE1D; k++) {
 			fprintf(snapshot, "%g ", ex[k]);

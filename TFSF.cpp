@@ -23,6 +23,10 @@ TFSF::~TFSF() {
 
 }
 
+void TFSF::Add1DSource(double *ex, Source *source, int t) {
+	ex[startZ] = source->getSource(t);
+}
+
 void TFSF::AddTfsf_XYPlane_E(double ***Ex, double ***Ey, double ***Ez, double *hy) {
 	Parameter param;
 	int SIZE_X = param.SIZE_X;
@@ -106,4 +110,28 @@ void TFSF::AddTfsf_Box_H(double ***Hx, double ***Hy, double ***Hz, double *ex) {
 
 int TFSF::getTFSFGrid() {
 	return TFSFGrid;
+}
+
+int TFSF::getstartX() {
+	return startX;
+}
+
+int TFSF::getstartY() {
+	return startY;
+}
+
+int TFSF::getstartZ() {
+	return startZ;
+}
+
+int TFSF::getendX() {
+	return endX;
+}
+
+int TFSF::getendY() {
+	return endY;
+}
+
+int TFSF::getendZ() {
+	return endZ;
 }
