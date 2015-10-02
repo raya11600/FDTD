@@ -6,6 +6,7 @@
 #include "Source.h"
 #include "CPML.h"
 #include "Parameter.h"
+#include "TFSF.h"
 using namespace std;
 
 Parameter param;
@@ -55,14 +56,22 @@ int main() {
 	double *ex = updater.getex();
 	double *hy = updater.gethy();
 	double ***Ex = updater.getEx();
+	double ***Ey = updater.getEy();
+	double ***Ez = updater.getEz();
+	double ***Hx = updater.getHx();
+	double ***Hy = updater.getHy();
+	double ***Hz = updater.getHz();
 	cout << "[INFO] Initialized class Update." << endl;
 
-	/*FILE *snapshot;
-	snapshot = fopen("data.log","w");
+	TFSF tfsf(CPMLGrid);
+	cout << "[INFO] Initialized class TFSF." << endl;
+
+	FILE *snapshot;
+	snapshot = fopen("ex.log","w");
 	for( int k = 0; k < SIZE_Z; k++ ) {
 		fprintf(snapshot, "%i ", k+1);
 	}
-	fprintf(snapshot, "\n");*/
+	fprintf(snapshot, "\n");
 	//cout << "[INFO] Start entering the time loop." << endl;
 	for (int t = 0; t < 1000; t++) {
 
@@ -74,14 +83,7 @@ int main() {
 	
 		updater.Update3DCpml_E(CPMLGrid, B_e, C_e);
 
-		int TFSF = CPMLGrid+5;
-		int startZ = TFSF - 1;
-		int k = startZ;
-		for( int i = 0; i < SIZE_X-1; i++ )
-		  for( int j = 1; j < SIZE_Y-1; j++ )
-		  { 
-		    Ex[i][j][k] += (param.dt/param.dx/param.eps0) * hy[k];
-		  }
+		tfsf.AddTfsf_XYPlane_E(Ex, Ey, Ez, hy);
 
 		updater.Update1Dfield_h(Chy, t);
 
@@ -91,19 +93,22 @@ int main() {
 
 		updater.Update3DCpml_H(CPMLGrid, B_h, C_h);
 
-		/*for (int k = 0; k < SIZE1D; k++) {
+		tfsf.AddTfsf_XYPlane_H(Hx, Hy, Hz, ex);
+
+		for (int k = 0; k < SIZE1D; k++) {
 			fprintf(snapshot, "%g ", ex[k]);
 		}
-		fprintf(snapshot, "\n");*/
+		fprintf(snapshot, "\n");
+		
 		updater.OutputEx_YZPlane(t);
 
 
 	}
 	//cout << "[Debug] Time loop done." << endl;
 
-	//fclose(snapshot);
+	fclose(snapshot);
 	//cout << "[Debug] snapshot done." << endl;
-	//snapshot = NULL;
+	snapshot = NULL;
 
 	cout << "[INFO] Finished." << endl;
 	return 0;

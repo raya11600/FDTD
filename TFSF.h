@@ -8,18 +8,31 @@ private:
 	int startX;
 	int startY;
 	int startZ;
+	int endX;
+	int endY;
+	int endZ;
 
 public:
-	TFSF();
+	TFSF(int CPMLGrid);
 	~TFSF();
 
-	void AddTfsf2Sides_E(double ***Ex, double ***Ey, double ***Ez, double *hy);
-	void AddTfsf2Sides_H(double ***Hx, double ***Hy, double ***Hz, double *ex);
+	// XYPlane
+		// TFSF boundary is just an x-y plane with no source end.
+	void AddTfsf_XYPlane_E(double ***Ex, double ***Ey, double ***Ez, double *hy);
+	void AddTfsf_XYPlane_H(double ***Hx, double ***Hy, double ***Hz, double *ex);
 
-	void TFSF::AddTfsf6Sides_E();
-	void TFSF::AddTfsf6Sides_H();
+	// Box
+		// TFSF boundary is like a rectangular box inside the field.
+	void AddTfsf_Box_E();
+	void AddTfsf_Box_H();
 	
 	int getTFSFGrid();
+	int getstartX();
+	int getstartY();
+	int getstartZ();
+	int getendX();
+	int getendY();
+	int getendZ();
 };
 
 #endif
