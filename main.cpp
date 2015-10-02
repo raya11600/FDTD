@@ -74,7 +74,7 @@ int main() {
 	}
 	fprintf(snapshot, "\n");
 	//cout << "[INFO] Start entering the time loop." << endl;
-	for (int t = 0; t < 1000; t++) {
+	for (int t = 1; t < 1000; t++) {
 
 		updater.Update1Dfield_e(Cex, t);
 

@@ -35,12 +35,20 @@ public:
 	Source();
 	~Source();
 
+	double 	getSource(int time);
+	void 	outputSettings();
+
 	int 	getSourceMode();
 	int 	gettotaltime();
 	int 	getstartGrid();
 
-	double 	getSource(int time);
-	void 	outputSettings();
+	// Get SineWave Info
+	//double	getwavelength();
+	//double	getsourceFreq();
+	int 	getsourcePeriod();
+	//double	gettimePerPeriod();
+	int 	getstepPerPeriod();
+	//double	getangularFreq();
 
 };
 

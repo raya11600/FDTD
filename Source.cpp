@@ -59,36 +59,6 @@ void Source::InitGaussianWave() {
 
 	totaltime = (int)round(total_simulation_time / param.dt);
 
-    //int m1=(int)round(f_min / df);			// The start grid of frequency step in freq domain
-    //int m2=(int)round(f_max / df),			// The end grid of frequency step in freq domain
-    //int m0=(int)round(f0    / df);			// The pitch grid of frequency step in freq domain
-
-/* // For phasor
-  register int f;
-
-  double *frequency_G = new double [frequency_sample],
-         *omega_G     = new double [frequency_sample];
-  for(f=0;f<frequency_sample;f++)
-  { frequency_G[f] = (m1+f)*df; // => m1*df + f*df => (f_min + f*df)
-    omega_G[f]     = 2.0*PI*frequency_G[f]; }
-
-  double *lambda_G = new double [frequency_sample];
-  for(f=0;f<frequency_sample;f++)
-  { lambda_G[f] = c / frequency_G[f]; }
-*/
-
-}
-
-int Source::getSourceMode() {
-	return SourceMode;
-}
-
-int Source::gettotaltime() {
-	return totaltime;
-}
-
-int Source::getstartGrid() {
-	return startGrid;
 }
 
 double Source::getSource(int t) {
@@ -158,3 +128,30 @@ void Source::outputSettings() {
 	file = NULL;
 
 }
+
+int Source::getSourceMode() {
+	return SourceMode;
+}
+
+int Source::gettotaltime() {
+	return totaltime;
+}
+
+int Source::getstartGrid() {
+	return startGrid;
+}
+
+//double Source::getwavelength();
+//double Source::getsourceFreq();
+
+int  Source::getsourcePeriod() {
+	return sourcePeriod;
+}
+
+//double Source::gettimePerPeriod();
+
+int Source::getstepPerPeriod() {
+	return stepPerPeriod;
+}
+
+//double Source::getangularFreq();
