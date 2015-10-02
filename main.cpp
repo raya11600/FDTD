@@ -15,6 +15,7 @@ int SIZE_Y = param.SIZE_Y;
 int SIZE_Z = param.SIZE_Z;
 int SIZE1D = param.SIZE1D;
 
+void ShowProgress(int time_step);
 
 int main() {
 
@@ -79,21 +80,21 @@ int main() {
 
 		updater.Update1DCpml_ex(CPMLGrid, B_e, C_e);
 
-		updater.Update3Dfield_E(Cexz, Cexy, Ceyx, Ceyz, Cezy, Cezx, t);
+		//updater.Update3Dfield_E(Cexz, Cexy, Ceyx, Ceyz, Cezy, Cezx, t);
 	
-		updater.Update3DCpml_E(CPMLGrid, B_e, C_e);
+		//updater.Update3DCpml_E(CPMLGrid, B_e, C_e);
 
-		tfsf.AddTfsf_Box_E(Ex, Ey, Ez, hy);
+		//tfsf.AddTfsf_Box_E(Ex, Ey, Ez, hy);
 
 		updater.Update1Dfield_h(Chy, t);
 
 		updater.Update1DCpml_hy(CPMLGrid, B_h, C_h);
 
-		updater.Update3Dfield_H(Chxz, Chxy, Chyx, Chyz, Chzy, Chzx, t);
+		//updater.Update3Dfield_H(Chxz, Chxy, Chyx, Chyz, Chzy, Chzx, t);
 
-		updater.Update3DCpml_H(CPMLGrid, B_h, C_h);
+		//updater.Update3DCpml_H(CPMLGrid, B_h, C_h);
 
-		tfsf.AddTfsf_Box_H(Hx, Hy, Hz, ex);
+		//tfsf.AddTfsf_Box_H(Hx, Hy, Hz, ex);
 
 		for (int k = 0; k < SIZE1D; k++) {
 			fprintf(snapshot, "%g ", ex[k]);
@@ -102,6 +103,7 @@ int main() {
 		
 		updater.OutputEx_YZPlane(t);
 
+		ShowProgress(t);
 
 	}
 	//cout << "[Debug] Time loop done." << endl;
@@ -112,4 +114,17 @@ int main() {
 
 	cout << "[INFO] Finished." << endl;
 	return 0;
+}
+
+void ShowProgress(int time_step) {
+	int percent = (int)floor(100 * (time_step+1)/1000);
+	static int A = 0;
+
+	if( time_step == 1 ) {
+		cout << percent << "%" << endl;
+	}
+	else if( time_step > 1 && percent > A ) {
+		cout << percent << "%" << endl;
+	}
+	A = percent;
 }

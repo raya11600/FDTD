@@ -19,12 +19,12 @@ void Update::Alloc1DArray() {
 
 	ex = generator.Alloc1DArray_double(param.SIZE1D);
 	hy = generator.Alloc1DArray_double(param.SIZE1D-1);
-
-	ex_now = generator.Alloc1DArray_double(param.SIZE1D);
-	ex_bef = generator.Alloc1DArray_double(param.SIZE1D);
+	ex_bef_start = 0.0;
+	ex_bef_end   = 0.0;
 
 	psi_ex = generator.Alloc1DArray_double(param.SIZE1D);
 	psi_hy = generator.Alloc1DArray_double(param.SIZE1D-1);
+
 }
 
 void Update::Alloc3DArray() {
@@ -61,9 +61,6 @@ void Update::Alloc3DArray() {
 Update::~Update() {
 	delete[] ex; ex = NULL;
 	delete[] hy; hy = NULL;
-
-	delete[] ex_now; ex_now = NULL;
-	delete[] ex_bef; ex_bef = NULL;
 
 	delete[] psi_ex; psi_ex = NULL;
 	delete[] psi_hy; psi_hy = NULL;
@@ -159,28 +156,24 @@ void Update::Update1Dfield_e(double *Cex, int t) {
 	Parameter param;
 	int SIZE1D = param.SIZE1D;
 
-	// Update e field
-	for (int k = 1; k < SIZE1D-1; k++) {
-		ex_now[k] = ex[k] - Cex[k] * ( hy[k] - hy[k-1] );
+	for( int k = 1; k < SIZE1D; k++ ) {
+		ex[k] = ex[k] - Cex[k] * ( hy[k] - hy[k-1] );
 	}
+
+	// Let edges pretend to do update.
+	// This will eliminate some feedback waves from PEC.
+	ex[0] 			= ex_bef_start;
+	ex[SIZE1D-1] 	= ex_bef_end;
 	
+	// Update edges info
+	ex_bef_start 	= ex[1];
+	ex_bef_end 		= ex[SIZE1D-2];
+
 	int TFSF = 20+5;
 	int startZ = TFSF - 1;
-	int k = startZ;
-	// Add Source
+
 	Source source;
-	ex_now[startZ] = source.getSource(t);
-
-	//if ( t == 1 ) {
-	//	ex_now[50] = 1;
-	//}
-
-	ex_now[0]=ex_bef[1];
-	ex_now[SIZE1D-1]=ex_bef[SIZE1D-2];
-
-	for(int k = 0; k < SIZE1D; k++)
-	{ ex_bef[k] = ex[k];
-	ex[k] = ex_now[k]; }
+	ex[startZ] = source.getSource(t);
 
 }
 

@@ -9,6 +9,8 @@ private:
 
 	double *ex_now;
 	double *ex_bef;
+	double ex_bef_start;
+	double ex_bef_end;
 
 	// 1D psi function
 	double *psi_ex;
