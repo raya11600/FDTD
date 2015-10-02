@@ -23,8 +23,8 @@ public:
 
 	// Box
 		// TFSF boundary is like a rectangular box inside the field.
-	void AddTfsf_Box_E();
-	void AddTfsf_Box_H();
+	void AddTfsf_Box_E(double ***Ex, double ***Ey, double ***Ez, double *hy);
+	void AddTfsf_Box_H(double ***Hx, double ***Hy, double ***Hz, double *ex);
 	
 	int getTFSFGrid();
 	int getstartX();

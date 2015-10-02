@@ -83,7 +83,7 @@ int main() {
 	
 		updater.Update3DCpml_E(CPMLGrid, B_e, C_e);
 
-		tfsf.AddTfsf_XYPlane_E(Ex, Ey, Ez, hy);
+		tfsf.AddTfsf_Box_E(Ex, Ey, Ez, hy);
 
 		updater.Update1Dfield_h(Chy, t);
 
@@ -93,7 +93,7 @@ int main() {
 
 		updater.Update3DCpml_H(CPMLGrid, B_h, C_h);
 
-		tfsf.AddTfsf_XYPlane_H(Hx, Hy, Hz, ex);
+		tfsf.AddTfsf_Box_H(Hx, Hy, Hz, ex);
 
 		for (int k = 0; k < SIZE1D; k++) {
 			fprintf(snapshot, "%g ", ex[k]);
