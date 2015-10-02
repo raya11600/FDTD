@@ -11,14 +11,14 @@ from matplotlib import animation
 """
 #fig = plt.figure()
 plt.figure()
-for i in range(500):
+for i in range(1000):
 	if i > 1 and i % 50 == 0:
 		name = "Ex_" + str(i) 
 		data = np.loadtxt( name + ".log" )
 		x = np.arange(len(data[0])+1)
 		y = np.arange(len(data)+1)
 		X, Y = np.meshgrid(x, y)
-		plt.pcolormesh(X,Y,data)
+		plt.pcolormesh(X,Y,data, vmin=-1.0, vmax=1.0)
 		plt.pause(0.5)
 		#plt.colorbar()
 		#plt.title( name )	
