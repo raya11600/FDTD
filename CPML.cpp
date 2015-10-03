@@ -2,10 +2,12 @@
 #include <cmath>
 #include "CPML.h"
 #include "ArrayGenerator.h"
-#include "Parameter.h"
 using namespace std;
 
 CPML::CPML() {
+	CPMLSwtich = true;
+	// true: on; false: off.
+
 	CPMLGrid = 20;
 
 	ArrayGenerator generator;
@@ -30,12 +32,10 @@ CPML::~CPML() {
 }
 
 void CPML::InitCPML() {
-	Parameter param;
-
 	int m=4; //powerlaw; 3<=m<=4
 	int kappa_max=15;
 	int ma = 1;
-	double sigma_max= 0.8*(m+1)/(param.imp0*param.dx);
+	double sigma_max= 0.8*(m+1)/(imp0*dx);
 	double alpha_max=0.24;
 
 	ArrayGenerator generator;
@@ -54,8 +54,8 @@ void CPML::InitCPML() {
 		alpha_e[i] = alpha_max * pow( (double(CPMLGrid-(i+0.0))/CPMLGrid) , ma);
 		alpha_h[i] = alpha_max * pow( (double(CPMLGrid-(i+0.5))/CPMLGrid) , ma);
 
-		B_e[i] = exp( -(param.dt/param.eps0) * (sigma_e[i]/kappa_e[i] + alpha_e[i]) );
-		B_h[i] = exp( -(param.dt/param.eps0) * (sigma_h[i]/kappa_h[i] + alpha_h[i]) );
+		B_e[i] = exp( -(dt/eps0) * (sigma_e[i]/kappa_e[i] + alpha_e[i]) );
+		B_h[i] = exp( -(dt/eps0) * (sigma_h[i]/kappa_h[i] + alpha_h[i]) );
 
 		C_e[i] = sigma_e[i] / kappa_e[i] / (sigma_e[i] + kappa_e[i]*alpha_e[i])
 		         * (B_e[i] - 1.0);

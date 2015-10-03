@@ -1,9 +1,12 @@
 #ifndef CPML_H
 #define CPML_H
 
-class CPML {
-private:
-	int CPMLGrid;
+#include "Parameter.h"
+
+class CPML : public Parameter {
+protected:
+	bool 	CPMLSwtich;
+	int 	CPMLGrid;
 
 	double *B_e;
 	double *B_h;
