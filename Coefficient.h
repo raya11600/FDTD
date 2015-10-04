@@ -1,17 +1,20 @@
 #ifndef COEFFICIENT_H
 #define COEFFICIENT_H
 
+#include "CPML.h"
+
 class Coefficient {
-private:
+protected:
 	// Basic parameter
 	double c_e;		// = dt/dx/eps0
 	double c_h;		// = dt/dx/mu0
 
+private:
 	// 1D Coefficients
 	double *Cex;
 	double *Chy;
 
-	void InitBasicCoef1D(int SIZE1D);
+	void InitBasicCoef1D();
 
 	// 3D Coefficients
 	double ***Cexz;
@@ -28,8 +31,8 @@ private:
 	double ***Chzy;
 	double ***Chzx;
 
-	void Alloc3DArray(int SIZE_X, int SIZE_Y, int SIZE_Z);
-	void InitBasicCoef3D(int SIZE_X, int SIZE_Y, int SIZE_Z);
+	void Alloc3DArray();
+	void InitBasicCoef3D();
 
 public:
 	Coefficient();

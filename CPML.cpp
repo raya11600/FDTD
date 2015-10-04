@@ -11,12 +11,12 @@ CPML::CPML() {
 	CPMLGrid = 20;
 
 	ArrayGenerator generator;
-	B_e = generator.Alloc1DArray_double(CPMLGrid+1);
-	B_h = generator.Alloc1DArray_double(CPMLGrid+1);
-	C_e = generator.Alloc1DArray_double(CPMLGrid+1);
-	C_h = generator.Alloc1DArray_double(CPMLGrid+1);
-	kappa_e = generator.Alloc1DArray_double(CPMLGrid+1);
-	kappa_h = generator.Alloc1DArray_double(CPMLGrid+1);
+	B_e = generator.Alloc1DArray_double(CPMLGrid);
+	B_h = generator.Alloc1DArray_double(CPMLGrid);
+	C_e = generator.Alloc1DArray_double(CPMLGrid);
+	C_h = generator.Alloc1DArray_double(CPMLGrid);
+	kappa_e = generator.Alloc1DArray_double(CPMLGrid);
+	kappa_h = generator.Alloc1DArray_double(CPMLGrid);
 
 	InitCPML();
 
@@ -39,12 +39,12 @@ void CPML::InitCPML() {
 	double alpha_max=0.24;
 
 	ArrayGenerator generator;
-	double *sigma_e = generator.Alloc1DArray_double(CPMLGrid+1);
-	double *sigma_h = generator.Alloc1DArray_double(CPMLGrid+1);
-	double *alpha_e = generator.Alloc1DArray_double(CPMLGrid+1);
-	double *alpha_h = generator.Alloc1DArray_double(CPMLGrid+1);
+	double *sigma_e = generator.Alloc1DArray_double(CPMLGrid);
+	double *sigma_h = generator.Alloc1DArray_double(CPMLGrid);
+	double *alpha_e = generator.Alloc1DArray_double(CPMLGrid);
+	double *alpha_h = generator.Alloc1DArray_double(CPMLGrid);
 
-	for(int i = 0; i <= CPMLGrid; i++) { 
+	for(int i = 0; i < CPMLGrid; i++) { 
 		sigma_e[i] = sigma_max * pow( (double(i+0.5)/CPMLGrid) , m);
 		sigma_h[i] = sigma_max * pow( (double(i+1.0)/CPMLGrid) , m);
 
@@ -78,37 +78,41 @@ void CPML::OutputCPML() {
 	fprintf(file, "\n");
 
 	fprintf(file, "----- Kappa -----\n");
+	fprintf(file, "Size of kappa_e = %d\n", (int)(sizeof(kappa_e)/sizeof(*kappa_e)));
 	fprintf(file, "kappa_e = \n");
-	for( int i = 0; i <= CPMLGrid; i++ ) {
+	for( int i = 0; i < CPMLGrid; i++ ) {
 		fprintf(file, "%g ", kappa_e[i]);
 	}
-	fprintf(file, "\n");
+	fprintf(file, "\n\n");
+	fprintf(file, "Size of kappa_h = %d\n", (int)(sizeof(kappa_h)/sizeof(*kappa_h)));
 	fprintf(file, "kappa_h = \n");
-	for( int i = 0; i <= CPMLGrid; i++ ) {
+	for( int i = 0; i < CPMLGrid; i++ ) {
 		fprintf(file, "%g ", kappa_h[i]);
 	}
 	fprintf(file, "\n");
 	fprintf(file, "\n");
 	fprintf(file, "----- B parameter -----\n");
+	//fprintf(file, "Size of B_e = %d\n", sizeof(B_e)/sizeof(*B_e));
 	fprintf(file, "B_e = \n");
-	for( int i = 0; i <= CPMLGrid; i++ ) {
+	for( int i = 0; i < CPMLGrid; i++ ) {
 		fprintf(file, "%g ", B_e[i]);
 	}
-	fprintf(file, "\n");
+	fprintf(file, "\n\n");
+	//fprintf(file, "Size of B_h = %d\n", sizeof(B_h)/sizeof(*B_h));
 	fprintf(file, "B_h = \n");
-	for( int i = 0; i <= CPMLGrid; i++ ) {
+	for( int i = 0; i < CPMLGrid; i++ ) {
 		fprintf(file, "%g ", B_h[i]);
 	}
 	fprintf(file, "\n");
 	fprintf(file, "\n");
 	fprintf(file, "----- C parameter -----\n");
 	fprintf(file, "C_e = \n");
-	for( int i = 0; i <= CPMLGrid; i++ ) {
+	for( int i = 0; i < CPMLGrid; i++ ) {
 		fprintf(file, "%g ", C_e[i]);
 	}
 	fprintf(file, "\n");
 	fprintf(file, "C_h = \n");
-	for( int i = 0; i <= CPMLGrid; i++ ) {
+	for( int i = 0; i < CPMLGrid; i++ ) {
 		fprintf(file, "%g ", C_h[i]);
 	}
 	fprintf(file, "\n");

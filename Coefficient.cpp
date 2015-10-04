@@ -1,27 +1,31 @@
 #include <stdio.h>
 #include "Coefficient.h"
 #include "ArrayGenerator.h"
-#include "Parameter.h"
-#include "CPML.h"
 using namespace std;
 
 Coefficient::Coefficient() {
 	Parameter param;
+	int SIZE1D = param.SIZE1D;
 
 	c_e = param.dt/(param.dx*param.eps0);
 	c_h = param.dt/(param.dx*param.mu0);
 
 	ArrayGenerator generator;
-	Cex = generator.Alloc1DArray_double(param.SIZE1D);
-	Chy = generator.Alloc1DArray_double(param.SIZE1D-1);
+	Cex = generator.Alloc1DArray_double(SIZE1D);
+	Chy = generator.Alloc1DArray_double(SIZE1D-1);
 
-	Alloc3DArray(param.SIZE_X, param.SIZE_Y, param.SIZE_Z);
+	Alloc3DArray();
 
-	InitBasicCoef1D(param.SIZE1D);
-	InitBasicCoef3D(param.SIZE_X, param.SIZE_Y, param.SIZE_Z);
+	InitBasicCoef1D();
+	InitBasicCoef3D();
 }
 
-void Coefficient::Alloc3DArray(int SIZE_X, int SIZE_Y, int SIZE_Z) {
+void Coefficient::Alloc3DArray() {
+	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
+
 	ArrayGenerator generator;
 
 	Cexz = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z);
@@ -40,12 +44,13 @@ void Coefficient::Alloc3DArray(int SIZE_X, int SIZE_Y, int SIZE_Z) {
 }
 
 Coefficient::~Coefficient() {
-	delete[] Cex; Cex = NULL;
-	delete[] Chy; Chy = NULL;
-
 	Parameter param;
 	int SIZE_X = param.SIZE_X;
 	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
+
+	delete[] Cex; Cex = NULL;
+	delete[] Chy; Chy = NULL;
 
 	for( int i = 0; i < SIZE_X; i++ ) {
 		for( int j = 0; j < SIZE_Y; j++ ) {
@@ -98,7 +103,10 @@ Coefficient::~Coefficient() {
 	delete[] Chzx; Chzx = NULL;
 }
 
-void Coefficient::InitBasicCoef1D(int SIZE1D) {
+void Coefficient::InitBasicCoef1D() {
+	Parameter param;
+	int SIZE1D = param.SIZE1D;
+
 	// Coefficient for 1D update equation
 	for(int i = 0; i < SIZE1D; i++) { 
 		Cex[i] = c_e;
@@ -109,7 +117,12 @@ void Coefficient::InitBasicCoef1D(int SIZE1D) {
 	}
 }
 
-void Coefficient::InitBasicCoef3D(int SIZE_X, int SIZE_Y, int SIZE_Z) {
+void Coefficient::InitBasicCoef3D() {
+	Parameter param;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
+
 	for( int i = 0; i < SIZE_X-1; i++ )
 		for( int j = 1; j < SIZE_Y-1; j++ )
 			for( int k = 1; k < SIZE_Z-1;k++) {
@@ -163,30 +176,31 @@ void Coefficient::Init1DCoefWithCpml() {
 	double *kappa_h = cpml.getkappa_h();
 
 	// Coefficient for 1D update equation with CPML
-	for(int i = 0; i < SIZE1D; i++) { 
-		if ( i >= 1 && i <= 1 + CPMLGrid ) {
-			Cex[i] /= kappa_e[CPMLGrid+1-i];
+	for( int i = 0; i < SIZE1D; i++ ) {
+		if( i >= 1 && i <= CPMLGrid ) {
+			Cex[i] /= kappa_e[CPMLGrid-i];
 		}
-		if ( i >= SIZE1D-2-CPMLGrid && i <= SIZE1D-2 ) {
-			Cex[i] /= kappa_e[i-(SIZE1D-2-CPMLGrid)];
+		if( i >= SIZE1D-1-CPMLGrid && i <= SIZE1D-2 ) {
+			Cex[i] /= kappa_e[i-(SIZE1D-1-CPMLGrid)];
 		}
 	}
 
-	for(int i = 0; i < SIZE1D-1; i++) { 
-		if ( i >= 0 && i <= 0 + CPMLGrid ) {
-			Chy[i] /= kappa_h[CPMLGrid-i];
+	for( int i = 0; i < SIZE1D-1; i++ ) {
+		if( i >= 0 && i <= CPMLGrid-1 ) {
+			Chy[i] /= kappa_h[(CPMLGrid-1)-i];
 		}
-		if ( i >= SIZE1D-2-CPMLGrid && i <= SIZE1D-2 ) {
-			Chy[i] /= kappa_h[i-(SIZE1D-2-CPMLGrid)];
+		if( i >= SIZE1D-1-CPMLGrid && i <= SIZE1D-2 ) {
+			Chy[i] /= kappa_h[i-(SIZE1D-1-CPMLGrid)];
 		}
 	}
+
 }
 
 void Coefficient::Init3DCoefWithCpml() {
 	Parameter param;
-	int SIZE_X = param.SIZE_X;
-	int SIZE_Y = param.SIZE_Y;
-	int SIZE_Z = param.SIZE_Z;
+	int SIZE_X = SIZE_X;
+	int SIZE_Y = SIZE_Y;
+	int SIZE_Z = SIZE_Z;
 
 	CPML cpml;
 	int CPMLGrid = cpml.getCPMLGrid();
@@ -324,6 +338,9 @@ void Coefficient::OutputCoef() {
 	Parameter param;
 	int SIZE1D = param.SIZE1D;
 
+	// Warning: All size of for loops should be careful to read out.
+	//          If any size of a for loop is larger than its array,
+	//          it would increase the size of array automatically.
 	FILE *file;
 	file = fopen("coefficient.data", "w");
 	fprintf(file, "----- Basic parameters -----\n");
@@ -336,7 +353,7 @@ void Coefficient::OutputCoef() {
 	}
 	fprintf(file, "\n\n");
 	fprintf(file, "----- 1D Chy -----\n");
-	for( int i = 0; i < SIZE1D; i++ ) {
+	for( int i = 0; i < SIZE1D-1; i++ ) {
 		fprintf(file, "%g ", Chy[i]);
 	}
 	fprintf(file, "\n\n");
