@@ -8,6 +8,10 @@ CPML::CPML() {
 	CPMLSwtich = true;
 	// true: on; false: off.
 
+	CPMLMode = 1;
+	// 1: 6 sides, including 2 sides of x, y, z direction respectively.
+	// 2: 2 sides, including z direction only.
+
 	CPMLGrid = 20;
 
 	ArrayGenerator generator;

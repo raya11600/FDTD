@@ -6,6 +6,7 @@
 class CPML : public Parameter {
 protected:
 	bool 	CPMLSwtich;
+	int 	CPMLMode;
 	int 	CPMLGrid;
 
 	double *B_e;
