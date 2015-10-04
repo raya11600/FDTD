@@ -15,6 +15,7 @@ protected:
 	double *kappa_e;
 	double *kappa_h;
 
+private:
 	void InitCPML();
 
 public:
