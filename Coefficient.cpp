@@ -198,9 +198,9 @@ void Coefficient::Init1DCoefWithCpml() {
 
 void Coefficient::Init3DCoefWithCpml() {
 	Parameter param;
-	int SIZE_X = SIZE_X;
-	int SIZE_Y = SIZE_Y;
-	int SIZE_Z = SIZE_Z;
+	int SIZE_X = param.SIZE_X;
+	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Z = param.SIZE_Z;
 
 	CPML cpml;
 	int CPMLGrid = cpml.getCPMLGrid();
@@ -212,19 +212,19 @@ void Coefficient::Init3DCoefWithCpml() {
 		for( int j = 1; j < SIZE_Y-1; j++ )
 			for( int k = 1; k < SIZE_Z-1;k++) {
 				// Cexz
-				if( j >= 1 && j <= 1+CPMLGrid ) {
-					Cexz[i][j][k] /= kappa_e[1+CPMLGrid-j];
+				if( j >= 1 && j <= CPMLGrid ) {
+					Cexz[i][j][k] /= kappa_e[CPMLGrid-j];
 				}
-				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
-					Cexz[i][j][k] /= kappa_e[j-(SIZE_Y-2-CPMLGrid)];
+				if( j >= SIZE_Y-1-CPMLGrid && j <= SIZE_Y-2 ) {
+					Cexz[i][j][k] /= kappa_e[j-(SIZE_Y-1-CPMLGrid)];
 				}
 
 				// Cexy
-				if( k >= 1 && k <= 1+CPMLGrid ) {
-					Cexy[i][j][k] /= kappa_e[1+CPMLGrid-k];
+				if( k >= 1 && k <= CPMLGrid ) {
+					Cexy[i][j][k] /= kappa_e[CPMLGrid-k];
 				}
-				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
-					Cexy[i][j][k] /= kappa_e[k-(SIZE_Z-2-CPMLGrid)];
+				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
+					Cexy[i][j][k] /= kappa_e[k-(SIZE_Z-1-CPMLGrid)];
 				}
 			}
 
@@ -233,20 +233,21 @@ void Coefficient::Init3DCoefWithCpml() {
 		for( int j = 0; j < SIZE_Y-1; j++ )
 			for( int k = 1; k < SIZE_Z-1;k++) {
 				// Ceyx
-				if( k >= 1 && k <= 1+CPMLGrid ) {
-					Ceyx[i][j][k] /= kappa_e[1+CPMLGrid-k];
+				if( k >= 1 && k <= CPMLGrid ) {
+					Ceyx[i][j][k] /= kappa_e[CPMLGrid-k];
 				}
-				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
-					Ceyx[i][j][k] /= kappa_e[k-(SIZE_Z-2-CPMLGrid)];
+				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
+					Ceyx[i][j][k] /= kappa_e[k-(SIZE_Z-1-CPMLGrid)];
 				}
 
 				// Ceyz
-				if( i >= 1 && i <= 1+CPMLGrid ) {
-					Ceyz[i][j][k] /= kappa_e[1+CPMLGrid-i];
+				if( i >= 1 && i <= CPMLGrid ) {
+					Ceyz[i][j][k] /= kappa_e[CPMLGrid-i];
 				}
-				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
-					Ceyz[i][j][k] /= kappa_e[i-(SIZE_X-2-CPMLGrid)];
+				if( i >= SIZE_X-1-CPMLGrid && i <= SIZE_X-2 ) {
+					Ceyz[i][j][k] /= kappa_e[i-(SIZE_X-1-CPMLGrid)];
 				}
+
 			}
 
 	// Ez
@@ -254,19 +255,19 @@ void Coefficient::Init3DCoefWithCpml() {
 		for( int j = 1; j < SIZE_Y-1; j++ )
 			for( int k = 0; k < SIZE_Z-1;k++) {
 				// Cezy
-				if( i >= 1 && i <= 1+CPMLGrid ) {
-					Cezy[i][j][k] /= kappa_e[1+CPMLGrid-i];
+				if( i >= 1 && i <= CPMLGrid ) {
+					Cezy[i][j][k] /= kappa_e[CPMLGrid-i];
 				}
-				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
-					Cezy[i][j][k] /= kappa_e[i-(SIZE_X-2-CPMLGrid)];
+				if( i >= SIZE_X-1-CPMLGrid && i <= SIZE_X-2 ) {
+					Cezy[i][j][k] /= kappa_e[i-(SIZE_X-1-CPMLGrid)];
 				}
 
 				// Cezx
-				if( j >= 1 && j <= 1+CPMLGrid ) {
-					Cezx[i][j][k] /= kappa_e[1+CPMLGrid-j];
+				if( j >= 1 && j <= CPMLGrid ) {
+					Cezx[i][j][k] /= kappa_e[CPMLGrid-j];
 				}
-				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
-					Cezx[i][j][k] /= kappa_e[j-(SIZE_Y-2-CPMLGrid)];
+				if( j >= SIZE_Y-1-CPMLGrid && j <= SIZE_Y-2 ) {
+					Cezx[i][j][k] /= kappa_e[j-(SIZE_Y-1-CPMLGrid)];
 				}
 			}
 
@@ -275,19 +276,19 @@ void Coefficient::Init3DCoefWithCpml() {
 		for( int j = 0; j < SIZE_Y-1; j++ )
 			for( int k = 0; k < SIZE_Z-1; k++ ) {
 				// Chxz
-				if( j >= 0 && j <= 0+CPMLGrid ) {
-					Chxz[i][j][k] /= kappa_h[0+CPMLGrid-j];
+				if( j >= 0 && j <= CPMLGrid-1 ) {
+					Chxz[i][j][k] /= kappa_h[(CPMLGrid-1)-j];
 				}
-				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
-					Chxz[i][j][k] /= kappa_h[j-(SIZE_Y-2-CPMLGrid)];
+				if( j >= SIZE_Y-1-CPMLGrid && j <= SIZE_Y-2 ) {
+					Chxz[i][j][k] /= kappa_h[j-(SIZE_Y-1-CPMLGrid)];
 				}
 
 				// Chxy
-				if( k >= 0 && k <= 0+CPMLGrid ) {
-					Chxy[i][j][k] /= kappa_h[0+CPMLGrid-k];
+				if( k >= 0 && k <= CPMLGrid-1 ) {
+					Chxy[i][j][k] /= kappa_h[(CPMLGrid-1)-k];
 				}
-				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
-					Chxy[i][j][k] /= kappa_h[k-(SIZE_Z-2-CPMLGrid)];
+				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
+					Chxy[i][j][k] /= kappa_h[k-(SIZE_Z-1-CPMLGrid)];
 				}
 			}
 
@@ -296,19 +297,19 @@ void Coefficient::Init3DCoefWithCpml() {
 		for( int j = 0; j < SIZE_Y; j++ )
 			for( int k = 0; k < SIZE_Z-1; k++ ) {
 				// Chyx
-				if( k >= 0 && k <= 0+CPMLGrid ) {
-					Chyx[i][j][k] /= kappa_h[0+CPMLGrid-k];
+				if( k >= 0 && k <= CPMLGrid-1 ) {
+					Chyx[i][j][k] /= kappa_h[(CPMLGrid-1)-k];
 				}
-				if( k >= SIZE_Z-2-CPMLGrid && k <= SIZE_Z-2 ) {
-					Chyx[i][j][k] /= kappa_h[k-(SIZE_Z-2-CPMLGrid)];
+				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
+					Chyx[i][j][k] /= kappa_h[k-(SIZE_Z-1-CPMLGrid)];
 				}
 
 				// Chyz
-				if( i >= 0 && i <= 0+CPMLGrid ) {
-					Chyz[i][j][k] /= kappa_h[0+CPMLGrid-i];
+				if( i >= 0 && i <= CPMLGrid-1 ) {
+					Chyz[i][j][k] /= kappa_h[(CPMLGrid-1)-i];
 				}
-				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
-					Chyz[i][j][k] /= kappa_h[i-(SIZE_X-2-CPMLGrid)];
+				if( i >= SIZE_X-1-CPMLGrid && i <= SIZE_X-2 ) {
+					Chyz[i][j][k] /= kappa_h[i-(SIZE_X-1-CPMLGrid)];
 				}
 			}
 
@@ -317,19 +318,19 @@ void Coefficient::Init3DCoefWithCpml() {
 		for( int j = 0; j < SIZE_Y-1; j++ )
 			for( int k = 0; k < SIZE_Z; k++ ) {
 				// Chzy
-				if( i >= 0 && i <= 0+CPMLGrid ) {
-					Chzy[i][j][k] /= kappa_h[0+CPMLGrid-i];
+				if( i >= 0 && i <= CPMLGrid-1 ) {
+					Chzy[i][j][k] /= kappa_h[(CPMLGrid-1)-i];
 				}
-				if( i >= SIZE_X-2-CPMLGrid && i <= SIZE_X-2 ) {
-					Chzy[i][j][k] /= kappa_h[i-(SIZE_X-2-CPMLGrid)];
+				if( i >= SIZE_X-1-CPMLGrid && i <= SIZE_X-2 ) {
+					Chzy[i][j][k] /= kappa_h[i-(SIZE_X-1-CPMLGrid)];
 				}
 
 				// Chzx
-				if( j >= 0 && j <= 0+CPMLGrid ) {
-					Chzx[i][j][k] /= kappa_h[0+CPMLGrid-j];
+				if( j >= 0 && j <= CPMLGrid-1 ) {
+					Chzx[i][j][k] /= kappa_h[(CPMLGrid-1)-j];
 				}
-				if( j >= SIZE_Y-2-CPMLGrid && j <= SIZE_Y-2 ) {
-					Chzx[i][j][k] /= kappa_h[j-(SIZE_Y-2-CPMLGrid)];
+				if( j >= SIZE_Y-1-CPMLGrid && j <= SIZE_Y-2 ) {
+					Chzx[i][j][k] /= kappa_h[j-(SIZE_Y-1-CPMLGrid)];
 				}
 			}
 }
