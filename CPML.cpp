@@ -5,7 +5,7 @@
 using namespace std;
 
 CPML::CPML() {
-	CPMLSwtich = true;
+	CPMLSwitch = true;
 	// true: on; false: off.
 
 	CPMLMode = 1;
@@ -14,6 +14,7 @@ CPML::CPML() {
 
 	CPMLGrid = 20;
 
+	// Allocate all necessary fields
 	ArrayGenerator generator;
 	B_e = generator.Alloc1DArray_double(CPMLGrid);
 	B_h = generator.Alloc1DArray_double(CPMLGrid);
@@ -22,6 +23,7 @@ CPML::CPML() {
 	kappa_e = generator.Alloc1DArray_double(CPMLGrid);
 	kappa_h = generator.Alloc1DArray_double(CPMLGrid);
 
+	// Initialize basic parameters of CPML
 	InitCPML();
 
 }

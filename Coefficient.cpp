@@ -4,11 +4,8 @@
 using namespace std;
 
 Coefficient::Coefficient() {
-	Parameter param;
-	int SIZE1D = param.SIZE1D;
-
-	c_e = param.dt/(param.dx*param.eps0);
-	c_h = param.dt/(param.dx*param.mu0);
+	c_e = dt/(dx*eps0);
+	c_h = dt/(dx*mu0);
 
 	ArrayGenerator generator;
 	Cex = generator.Alloc1DArray_double(SIZE1D);
@@ -18,14 +15,22 @@ Coefficient::Coefficient() {
 
 	InitBasicCoef1D();
 	InitBasicCoef3D();
+
+	if( CPMLSwitch == true ) {
+		InitCpmlCoef1D();
+
+		if( CPMLMode == 1 ) {
+			InitCPMLCoef3D_X();
+			InitCPMLCoef3D_Y();
+			InitCPMLCoef3D_Z();
+		}
+		else if( CPMLMode == 2 ) {
+			InitCPMLCoef3D_Z();
+		}
+	}
 }
 
 void Coefficient::Alloc3DArray() {
-	Parameter param;
-	int SIZE_X = param.SIZE_X;
-	int SIZE_Y = param.SIZE_Y;
-	int SIZE_Z = param.SIZE_Z;
-
 	ArrayGenerator generator;
 
 	Cexz = generator.Alloc3DArray_double(SIZE_X-1, SIZE_Y, SIZE_Z);
@@ -44,11 +49,6 @@ void Coefficient::Alloc3DArray() {
 }
 
 Coefficient::~Coefficient() {
-	Parameter param;
-	int SIZE_X = param.SIZE_X;
-	int SIZE_Y = param.SIZE_Y;
-	int SIZE_Z = param.SIZE_Z;
-
 	delete[] Cex; Cex = NULL;
 	delete[] Chy; Chy = NULL;
 
@@ -104,9 +104,6 @@ Coefficient::~Coefficient() {
 }
 
 void Coefficient::InitBasicCoef1D() {
-	Parameter param;
-	int SIZE1D = param.SIZE1D;
-
 	// Coefficient for 1D update equation
 	for(int i = 0; i < SIZE1D; i++) { 
 		Cex[i] = c_e;
@@ -118,11 +115,6 @@ void Coefficient::InitBasicCoef1D() {
 }
 
 void Coefficient::InitBasicCoef3D() {
-	Parameter param;
-	int SIZE_X = param.SIZE_X;
-	int SIZE_Y = param.SIZE_Y;
-	int SIZE_Z = param.SIZE_Z;
-
 	for( int i = 0; i < SIZE_X-1; i++ )
 		for( int j = 1; j < SIZE_Y-1; j++ )
 			for( int k = 1; k < SIZE_Z-1;k++) {
@@ -166,15 +158,7 @@ void Coefficient::InitBasicCoef3D() {
 			}
 }
 
-void Coefficient::Init1DCoefWithCpml() {
-	Parameter param;
-	int SIZE1D = param.SIZE1D;
-
-	CPML cpml;
-	int CPMLGrid = cpml.getCPMLGrid();
-	double *kappa_e = cpml.getkappa_e();
-	double *kappa_h = cpml.getkappa_h();
-
+void Coefficient::InitCpmlCoef1D() {
 	// Coefficient for 1D update equation with CPML
 	for( int i = 0; i < SIZE1D; i++ ) {
 		if( i >= 1 && i <= CPMLGrid ) {
@@ -196,50 +180,10 @@ void Coefficient::Init1DCoefWithCpml() {
 
 }
 
-void Coefficient::Init3DCoefWithCpml() {
-	Parameter param;
-	int SIZE_X = param.SIZE_X;
-	int SIZE_Y = param.SIZE_Y;
-	int SIZE_Z = param.SIZE_Z;
-
-	CPML cpml;
-	int CPMLGrid = cpml.getCPMLGrid();
-	double *kappa_e = cpml.getkappa_e();
-	double *kappa_h = cpml.getkappa_h();
-
-	// Ex
-	for( int i = 0; i < SIZE_X-1; i++ )
-		for( int j = 1; j < SIZE_Y-1; j++ )
-			for( int k = 1; k < SIZE_Z-1;k++) {
-				// Cexz
-				if( j >= 1 && j <= CPMLGrid ) {
-					Cexz[i][j][k] /= kappa_e[CPMLGrid-j];
-				}
-				if( j >= SIZE_Y-1-CPMLGrid && j <= SIZE_Y-2 ) {
-					Cexz[i][j][k] /= kappa_e[j-(SIZE_Y-1-CPMLGrid)];
-				}
-
-				// Cexy
-				if( k >= 1 && k <= CPMLGrid ) {
-					Cexy[i][j][k] /= kappa_e[CPMLGrid-k];
-				}
-				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
-					Cexy[i][j][k] /= kappa_e[k-(SIZE_Z-1-CPMLGrid)];
-				}
-			}
-
-	// Ey
+void Coefficient::InitCPMLCoef3D_X() {
 	for( int i = 1; i < SIZE_X-1; i++ )
 		for( int j = 0; j < SIZE_Y-1; j++ )
 			for( int k = 1; k < SIZE_Z-1;k++) {
-				// Ceyx
-				if( k >= 1 && k <= CPMLGrid ) {
-					Ceyx[i][j][k] /= kappa_e[CPMLGrid-k];
-				}
-				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
-					Ceyx[i][j][k] /= kappa_e[k-(SIZE_Z-1-CPMLGrid)];
-				}
-
 				// Ceyz
 				if( i >= 1 && i <= CPMLGrid ) {
 					Ceyz[i][j][k] /= kappa_e[CPMLGrid-i];
@@ -247,10 +191,8 @@ void Coefficient::Init3DCoefWithCpml() {
 				if( i >= SIZE_X-1-CPMLGrid && i <= SIZE_X-2 ) {
 					Ceyz[i][j][k] /= kappa_e[i-(SIZE_X-1-CPMLGrid)];
 				}
-
 			}
 
-	// Ez
 	for( int i = 1; i < SIZE_X-1; i++ )
 		for( int j = 1; j < SIZE_Y-1; j++ )
 			for( int k = 0; k < SIZE_Z-1;k++) {
@@ -261,49 +203,11 @@ void Coefficient::Init3DCoefWithCpml() {
 				if( i >= SIZE_X-1-CPMLGrid && i <= SIZE_X-2 ) {
 					Cezy[i][j][k] /= kappa_e[i-(SIZE_X-1-CPMLGrid)];
 				}
-
-				// Cezx
-				if( j >= 1 && j <= CPMLGrid ) {
-					Cezx[i][j][k] /= kappa_e[CPMLGrid-j];
-				}
-				if( j >= SIZE_Y-1-CPMLGrid && j <= SIZE_Y-2 ) {
-					Cezx[i][j][k] /= kappa_e[j-(SIZE_Y-1-CPMLGrid)];
-				}
 			}
 
-	// Hx
-	for( int i = 0; i < SIZE_X; i++ )
-		for( int j = 0; j < SIZE_Y-1; j++ )
-			for( int k = 0; k < SIZE_Z-1; k++ ) {
-				// Chxz
-				if( j >= 0 && j <= CPMLGrid-1 ) {
-					Chxz[i][j][k] /= kappa_h[(CPMLGrid-1)-j];
-				}
-				if( j >= SIZE_Y-1-CPMLGrid && j <= SIZE_Y-2 ) {
-					Chxz[i][j][k] /= kappa_h[j-(SIZE_Y-1-CPMLGrid)];
-				}
-
-				// Chxy
-				if( k >= 0 && k <= CPMLGrid-1 ) {
-					Chxy[i][j][k] /= kappa_h[(CPMLGrid-1)-k];
-				}
-				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
-					Chxy[i][j][k] /= kappa_h[k-(SIZE_Z-1-CPMLGrid)];
-				}
-			}
-
-	// Hy
 	for( int i = 0; i < SIZE_X-1; i++ )
 		for( int j = 0; j < SIZE_Y; j++ )
 			for( int k = 0; k < SIZE_Z-1; k++ ) {
-				// Chyx
-				if( k >= 0 && k <= CPMLGrid-1 ) {
-					Chyx[i][j][k] /= kappa_h[(CPMLGrid-1)-k];
-				}
-				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
-					Chyx[i][j][k] /= kappa_h[k-(SIZE_Z-1-CPMLGrid)];
-				}
-
 				// Chyz
 				if( i >= 0 && i <= CPMLGrid-1 ) {
 					Chyz[i][j][k] /= kappa_h[(CPMLGrid-1)-i];
@@ -313,7 +217,6 @@ void Coefficient::Init3DCoefWithCpml() {
 				}
 			}
 
-	// Hz
 	for( int i = 0; i < SIZE_X-1; i++ )
 		for( int j = 0; j < SIZE_Y-1; j++ )
 			for( int k = 0; k < SIZE_Z; k++ ) {
@@ -324,7 +227,49 @@ void Coefficient::Init3DCoefWithCpml() {
 				if( i >= SIZE_X-1-CPMLGrid && i <= SIZE_X-2 ) {
 					Chzy[i][j][k] /= kappa_h[i-(SIZE_X-1-CPMLGrid)];
 				}
+			}
+}
 
+void Coefficient::InitCPMLCoef3D_Y() {
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 1; j < SIZE_Y-1; j++ )
+			for( int k = 1; k < SIZE_Z-1;k++) {
+				// Cexz
+				if( j >= 1 && j <= CPMLGrid ) {
+					Cexz[i][j][k] /= kappa_e[CPMLGrid-j];
+				}
+				if( j >= SIZE_Y-1-CPMLGrid && j <= SIZE_Y-2 ) {
+					Cexz[i][j][k] /= kappa_e[j-(SIZE_Y-1-CPMLGrid)];
+				}
+			}
+
+	for( int i = 1; i < SIZE_X-1; i++ )
+		for( int j = 1; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z-1;k++) {
+				// Cezx
+				if( j >= 1 && j <= CPMLGrid ) {
+					Cezx[i][j][k] /= kappa_e[CPMLGrid-j];
+				}
+				if( j >= SIZE_Y-1-CPMLGrid && j <= SIZE_Y-2 ) {
+					Cezx[i][j][k] /= kappa_e[j-(SIZE_Y-1-CPMLGrid)];
+				}
+			}
+
+	for( int i = 0; i < SIZE_X; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				// Chxz
+				if( j >= 0 && j <= CPMLGrid-1 ) {
+					Chxz[i][j][k] /= kappa_h[(CPMLGrid-1)-j];
+				}
+				if( j >= SIZE_Y-1-CPMLGrid && j <= SIZE_Y-2 ) {
+					Chxz[i][j][k] /= kappa_h[j-(SIZE_Y-1-CPMLGrid)];
+				}
+			}
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z; k++ ) {
 				// Chzx
 				if( j >= 0 && j <= CPMLGrid-1 ) {
 					Chzx[i][j][k] /= kappa_h[(CPMLGrid-1)-j];
@@ -335,10 +280,57 @@ void Coefficient::Init3DCoefWithCpml() {
 			}
 }
 
-void Coefficient::OutputCoef() {
-	Parameter param;
-	int SIZE1D = param.SIZE1D;
+void Coefficient::InitCPMLCoef3D_Z() {
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 1; j < SIZE_Y-1; j++ )
+			for( int k = 1; k < SIZE_Z-1;k++) {
+				// Cexy
+				if( k >= 1 && k <= CPMLGrid ) {
+					Cexy[i][j][k] /= kappa_e[CPMLGrid-k];
+				}
+				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
+					Cexy[i][j][k] /= kappa_e[k-(SIZE_Z-1-CPMLGrid)];
+				}
+			}
 
+	for( int i = 1; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 1; k < SIZE_Z-1;k++) {
+				// Ceyx
+				if( k >= 1 && k <= CPMLGrid ) {
+					Ceyx[i][j][k] /= kappa_e[CPMLGrid-k];
+				}
+				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
+					Ceyx[i][j][k] /= kappa_e[k-(SIZE_Z-1-CPMLGrid)];
+				}
+			}
+
+	for( int i = 0; i < SIZE_X; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				// Chxy
+				if( k >= 0 && k <= CPMLGrid-1 ) {
+					Chxy[i][j][k] /= kappa_h[(CPMLGrid-1)-k];
+				}
+				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
+					Chxy[i][j][k] /= kappa_h[k-(SIZE_Z-1-CPMLGrid)];
+				}
+			}
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				// Chyx
+				if( k >= 0 && k <= CPMLGrid-1 ) {
+					Chyx[i][j][k] /= kappa_h[(CPMLGrid-1)-k];
+				}
+				if( k >= SIZE_Z-1-CPMLGrid && k <= SIZE_Z-2 ) {
+					Chyx[i][j][k] /= kappa_h[k-(SIZE_Z-1-CPMLGrid)];
+				}
+			}
+}
+
+void Coefficient::OutputCoef() {
 	// Warning: All size of for loops should be careful to read out.
 	//          If any size of a for loop is larger than its array,
 	//          it would increase the size of array automatically.

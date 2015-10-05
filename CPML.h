@@ -5,7 +5,7 @@
 
 class CPML : public Parameter {
 protected:
-	bool 	CPMLSwtich;
+	bool 	CPMLSwitch;
 	int 	CPMLMode;
 	int 	CPMLGrid;
 
@@ -25,7 +25,7 @@ public:
 
 	void OutputCPML();
 
-	int getCPMLGrid();
+	int 	getCPMLGrid();
 	double *getB_e();
 	double *getB_h();
 	double *getC_e();

@@ -259,6 +259,14 @@ void Update::Update3Dfield_H(double ***Chxz, double ***Chxy, double ***Chyx,
 	int SIZE_Y = param.SIZE_Y;
 	int SIZE_Z = param.SIZE_Z;
 
+	// For test only
+	/*if( t == 1 ) {
+		Ex[SIZE_X/2][SIZE_Y/2][SIZE_Z/2] = 100.0;
+	}
+	else {
+		Ex[SIZE_X/2][SIZE_Y/2][SIZE_Z/2] = 0.0;
+	}*/
+
 	for( int i = 0; i < SIZE_X; i++ )
 		for( int j = 0; j < SIZE_Y-1; j++ )
 			for( int k = 0; k < SIZE_Z-1; k++ ) {

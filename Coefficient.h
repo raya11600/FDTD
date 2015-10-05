@@ -3,7 +3,7 @@
 
 #include "CPML.h"
 
-class Coefficient {
+class Coefficient : public CPML {
 protected:
 	// Basic parameter
 	double c_e;		// = dt/dx/eps0
@@ -38,8 +38,10 @@ public:
 	Coefficient();
 	~Coefficient();
 
-	void Init1DCoefWithCpml();
-	void Init3DCoefWithCpml();
+	void InitCpmlCoef1D();
+	void InitCPMLCoef3D_X();
+	void InitCPMLCoef3D_Y();
+	void InitCPMLCoef3D_Z();
 	void OutputCoef();
 
 	double *getCex();
