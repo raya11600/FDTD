@@ -1,0 +1,17 @@
+Author: Raya Change
+Location: Taipei, Taiwan
+Lab: , NTU GIPO.
+
+Topic: 	Finite Difference in Time Domain (FDTD) Calculation Machine
+Abstract:
+		FDTD is one of methods to simulate EM waves, which is often used in
+	simulating nano or micro structure such as nanoantennas.
+		This script provides the mutual simulator of FDTD method in 3-D with
+	CPML, TFSF structures. This's a fundamental tool for Master students. You 
+	can	add any structure, source, or PML you want. It's very easy to understand
+	by reading the structure of program below at first. Hope this tool would
+	help you do some simulation research.
+
+Scripts Outline:
+
+Program Structure:
