@@ -1,6 +1,5 @@
 #include <cmath>
 #include <stdio.h>
-#include <iostream>
 #include "Source.h"
 using namespace std;
 
@@ -23,7 +22,7 @@ Source::~Source() {
 
 void Source::InitSineWave() {
 	wavelength 		= 0.85e-6;	//unit: m
-	sourcePeriod	= 11;
+	sourcePeriod	= 2;
 	sourceFreq 		= lightspeed / wavelength;
 	timePerPeriod 	= 1.0 / sourceFreq;
 	stepPerPeriod  	= (int)round( timePerPeriod / dt );	
@@ -36,7 +35,7 @@ void Source::InitSineWave() {
 void Source::InitGaussianWave() {
 	wavelength_max		= 1.1e-6;
 	wavelength_min		= 0.7e-6;
-	frequency_sample 	= 201; 
+	frequency_sample 	= 100; 
 
 	f_max 	= lightspeed / wavelength_min;
 	f_min 	= lightspeed / wavelength_max;
@@ -46,7 +45,7 @@ void Source::InitGaussianWave() {
 
 	gaussian_width	= (3.0*sqrt(2.0)/sqrt(PI)) * (1.0/bw);
 
-	df 	= bw / (frequency_sample-1);
+	df 	= bw / frequency_sample;
 
 	total_simulation_time	= 1.0 / df;
 
@@ -59,7 +58,7 @@ double Source::getSource(int t) {
 		return sin( angularFreq * dt * t );
 	}
 	else if ( SourceMode == 2 ) {
-		int t0=totaltime/2;
+		int t0 = totaltime / 2;
 		return	1.0 / gaussian_width
 				* exp(-PI * (t-t0)*dt/gaussian_width * (t-t0)*dt/gaussian_width )
 				* sin( 2.0 * PI * f0 * (t-t0) * dt );
