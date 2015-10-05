@@ -2,9 +2,9 @@
 #define TFSF_H
 
 #include "Source.h"
-#include "Parameter.h"
+#include "CPML.h"
 
-class TFSF : public Parameter {
+class TFSF : public Source {
 protected:
 	bool 	TFSFSwitch;
 	int 	TFSFGrid;
@@ -17,11 +17,11 @@ protected:
 	int 	endZ;
 
 public:
-	TFSF(int CPMLGrid);
+	TFSF(CPML *cpml);
 	~TFSF();
 	
 	// 1D Source
-	void Add1DSource(double *ex, Source *source, int t);
+	void Add1DSource(double *ex, int t);
 
 	// XYPlane
 		// TFSF boundary is just an x-y plane with no source end.

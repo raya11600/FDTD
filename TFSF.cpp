@@ -2,7 +2,10 @@
 #include "TFSF.h"
 using namespace std;
 
-TFSF::TFSF(int CPMLGrid) {
+TFSF::TFSF(CPML *cpml) {
+	int CPMLGrid = cpml->getCPMLGrid();
+	int CPMLMode = cpml->getCPMLMode();
+
 	TFSFSwitch = true;
 	// true:  on
 	// false: off
@@ -21,8 +24,8 @@ TFSF::~TFSF() {
 
 }
 
-void TFSF::Add1DSource(double *ex, Source *source, int t) {
-	ex[startZ] = source->getSource(t);
+void TFSF::Add1DSource(double *ex, int t) {
+	ex[startZ] = getSource(t);
 }
 
 void TFSF::AddTfsf_XYPlane_E(double ***Ex, double ***Ey, double ***Ez, double *hy) {

@@ -26,12 +26,8 @@ int main() {
 	source.outputSettings();
 
 	CPML cpml;
-	int CPMLGrid = cpml.getCPMLGrid();
+	//int CPMLGrid = cpml.getCPMLGrid();
 	cpml.OutputCPML();
-	double *B_e = cpml.getB_e();
-	double *B_h = cpml.getB_h();
-	double *C_e = cpml.getC_e();
-	double *C_h = cpml.getC_h();
 
 	Coefficient coef;
 	coef.OutputCoef();
@@ -48,12 +44,12 @@ int main() {
 	double ***Hz = updater.getHz();
 	cout << "[INFO] Initialized class Update." << endl;
 
-	TFSF tfsf(CPMLGrid);
+	TFSF tfsf(&cpml);
 	cout << "[INFO] Initialized class TFSF." << endl;
 
 	FILE *snapshot;
 	snapshot = fopen("ex.log","w");
-	for( int k = 0; k < SIZE_Z; k++ ) {
+	for( int k = 0; k < SIZE1D; k++ ) {
 		fprintf(snapshot, "%i ", k+1);
 	}
 	fprintf(snapshot, "\n");
@@ -62,7 +58,7 @@ int main() {
 
 		updater.Update1Dfield_e(t);
 
-		tfsf.Add1DSource(ex, &source, t);
+		tfsf.Add1DSource(ex, t);
 
 		updater.Update1DCpml_ex();
 
