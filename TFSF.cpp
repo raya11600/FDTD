@@ -2,15 +2,16 @@
 #include "TFSF.h"
 using namespace std;
 
-TFSF::TFSF(CPML *cpml) {
-	int CPMLGrid = cpml->getCPMLGrid();
-	int CPMLMode = cpml->getCPMLMode();
-
+TFSF::TFSF() {
 	TFSFSwitch = true;
 	// true:  on
 	// false: off
 
-	TFSFGrid = CPMLGrid + 5;
+	TFSFMode = 1;
+	// 1: Add TFSF in an x-y plane
+	// 2: Add TFSF in a box.
+
+	TFSFGrid = 20 + 5;
 
 	startX 	= TFSFGrid - 1;
 	endX 	= SIZE_X - TFSFGrid - 1;

@@ -7,6 +7,7 @@
 class TFSF : public Source {
 protected:
 	bool 	TFSFSwitch;
+	int 	TFSFMode;
 	int 	TFSFGrid;
 
 	int 	startX;
@@ -17,7 +18,7 @@ protected:
 	int 	endZ;
 
 public:
-	TFSF(CPML *cpml);
+	TFSF();
 	~TFSF();
 	
 	// 1D Source
