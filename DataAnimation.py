@@ -2,13 +2,13 @@ import numpy as np
 from matplotlib import pyplot as plt   
 from matplotlib import animation
 
-data = np.loadtxt("data.log")
+data = np.loadtxt("ex.log")
 
 fig = plt.figure()
 plt.xlim(0, 100)
 plt.ylim(-1, 1)
 images = []
-for i in range(500):
+for i in range(1000):
 	x = data[0, :]
 	y = data[i, :]
 	im = plt.plot(x, y, "b", lw=3)
