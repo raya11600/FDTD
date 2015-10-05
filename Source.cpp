@@ -2,21 +2,18 @@
 #include <stdio.h>
 #include <iostream>
 #include "Source.h"
-#include "Parameter.h"
 using namespace std;
 
 Source::Source() {
 	SourceMode = 1;
-	startGrid = 0;
+	// 1: Sine wave
+	// 2: Gaussian wave
 
 	if( SourceMode == 1 ) {
 		InitSineWave();
 	}
 	else if( SourceMode == 2 ) {
 		InitGaussianWave();
-	}
-	else {
-		cout << "[Error] Parameter.SourceMode error." << endl;
 	}
 }
 
@@ -29,11 +26,11 @@ void Source::InitSineWave() {
 
 	wavelength 		= 0.85e-6;	//unit: m
 	sourcePeriod	= 11;
-	sourceFreq 		= param.lightspeed / wavelength;
+	sourceFreq 		= lightspeed / wavelength;
 	timePerPeriod 	= 1.0 / sourceFreq;
-	stepPerPeriod  	= (int)round( timePerPeriod / param.dt );	
+	stepPerPeriod  	= (int)round( timePerPeriod / dt );	
 
-	angularFreq 	= 2.0 * param.PI * sourceFreq;
+	angularFreq 	= 2.0 * PI * sourceFreq;
 
 	totaltime 		= sourcePeriod * stepPerPeriod;
 }
@@ -45,19 +42,19 @@ void Source::InitGaussianWave() {
 	wavelength_min		= 0.7e-6;
 	frequency_sample 	= 201; 
 
-	f_max 	= param.lightspeed / wavelength_min;
-	f_min 	= param.lightspeed / wavelength_max;
+	f_max 	= lightspeed / wavelength_min;
+	f_min 	= lightspeed / wavelength_max;
 
 	f0		= (f_max+f_min) / 2.0;
 	bw		= (f_max-f_min);
 
-	gaussian_width	= (3.0*sqrt(2.0)/sqrt(param.PI)) * (1.0/bw);
+	gaussian_width	= (3.0*sqrt(2.0)/sqrt(PI)) * (1.0/bw);
 
 	df 	= bw / (frequency_sample-1);
 
 	total_simulation_time	= 1.0 / df;
 
-	totaltime = (int)round(total_simulation_time / param.dt);
+	totaltime = (int)round(total_simulation_time / dt);
 
 }
 
@@ -65,16 +62,13 @@ double Source::getSource(int t) {
 	Parameter param;
 
 	if( SourceMode == 1 ) {
-		return sin( angularFreq * param.dt * t );
+		return sin( angularFreq * dt * t );
 	}
 	else if ( SourceMode == 2 ) {
 		int t0=totaltime/2;
 		return	1.0 / gaussian_width
-				* exp(-param.PI * (t-t0)*param.dt/gaussian_width * (t-t0)*param.dt/gaussian_width )
-				* sin( 2.0 * param.PI * f0 * (t-t0) * param.dt );
-	}
-	else {
-		return -1; // Error code
+				* exp(-PI * (t-t0)*dt/gaussian_width * (t-t0)*dt/gaussian_width )
+				* sin( 2.0 * PI * f0 * (t-t0) * dt );
 	}
 }
 
@@ -89,8 +83,6 @@ void Source::outputSettings() {
 		fprintf(file, "Mode = Gaussian Wave\n");
 	}
 	fprintf(file, "Total time steps = %i\n", totaltime);
-	fprintf(file, "\n");
-	fprintf(file, "Grid to start = %i\n", startGrid);
 	fprintf(file, "\n");
 	fprintf(file, "\n");
 	
@@ -136,22 +128,3 @@ int Source::getSourceMode() {
 int Source::gettotaltime() {
 	return totaltime;
 }
-
-int Source::getstartGrid() {
-	return startGrid;
-}
-
-//double Source::getwavelength();
-//double Source::getsourceFreq();
-
-int  Source::getsourcePeriod() {
-	return sourcePeriod;
-}
-
-//double Source::gettimePerPeriod();
-
-int Source::getstepPerPeriod() {
-	return stepPerPeriod;
-}
-
-//double Source::getangularFreq();

@@ -1,12 +1,12 @@
 #ifndef SOURCE_H
 #define SOURCE_H
 
-class Source {
-private:
+#include "Parameter.h"
+
+class Source : public Parameter {
+protected:
 	int		SourceMode;
 	int 	totaltime;
-
-	int 	startGrid;
 
 	// Sine wave
 	double	wavelength;			// Wave length
@@ -15,7 +15,6 @@ private:
 	double	timePerPeriod;		// Time in a period
 	int 	stepPerPeriod;		// Time steps in a period 
 	double	angularFreq;
-	void InitSineWave();
 
 	// Gaussian wave
 	int 	frequency_sample; 	// Sample numbers in frequency domain
@@ -29,6 +28,8 @@ private:
 	double	gaussian_width;			// Gaussian pulse width in time domain
 	double	total_simulation_time;	// Total time to simulate a Guassian pulse
 
+private:
+	void InitSineWave();
 	void InitGaussianWave();
 
 public:
@@ -40,16 +41,6 @@ public:
 
 	int 	getSourceMode();
 	int 	gettotaltime();
-	int 	getstartGrid();
-
-	// Get SineWave Info
-	//double	getwavelength();
-	//double	getsourceFreq();
-	int 	getsourcePeriod();
-	//double	gettimePerPeriod();
-	int 	getstepPerPeriod();
-	//double	getangularFreq();
-
 };
 
 #endif
