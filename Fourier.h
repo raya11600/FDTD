@@ -1,12 +1,19 @@
 #ifndef FOURIER_H
 #define FOURIER_H
 
-class Fourier {
-private:
+#include "TFSF.h"
+
+class Fourier : public TFSF {
+protected:
 	// Basic Parameters
 	int fourier_start;
 	int fourier_end;
 
+	double *GaussianFreq;
+	double *GaussianAngularFreq;
+	double *GaussianWavelength;
+
+private:
 	// 1D Phasors
 	double ex_Re;
 	double ex_Im;
@@ -45,12 +52,21 @@ private:
 	double ***abs_Hz_phasor;
 	double ***Hz_phase;
 
+	void Alloc3DArray();
+
 public:
 	Fourier();
 	~Fourier();
 
-	void FT_SineWave();
+	void FT_SineWave(double ***Ex, double ***Ey, double ***Ez,
+					 double ***Hx, double ***Hy, double ***Hz,
+					 double *ex,   double *hy,   int t         );
 	void FT_GaussianWave();
+
+	void Phasor_SineWave();
+
+	void Output_Phasor_SineWave();
+	void Output_Phase_SineWave();
 };
 
 #endif

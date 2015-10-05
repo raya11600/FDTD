@@ -1,54 +1,43 @@
 #include <stdio.h>
+#include <iostream>
+#include <cmath>
 #include "Fourier.h"
 #include "ArrayGenerator.h"
-#include "Parameter.h"
-#include "Source.h"
 using namespace std;
 
-Fourier::Fourier(int SourceMode) {
-	Source source;
-
+Fourier::Fourier() {
 	//Sine Wave
 	if( SourceMode == 1 ) {
-		int T = source.getsourcePeriod();
-		int q = source.getstepPerPeriod();
-		fourier_start = (T - 1) * q;
-		fourier_end   = fourier_start + q;
+		fourier_start = (sourcePeriod - 1) * stepPerPeriod;
+		fourier_end   = fourier_start + stepPerPeriod;
 	}
 	//Gaussian Pulse
 	else if( SourceMode == 2 ) {
-		int totaltime = source.gettotaltime();
 		fourier_start = 0;
 		fourier_end   = totaltime;
+
+		ArrayGenerator generator;
+		GaussianFreq 		= generator.Alloc1DArray_double(frequency_sample+1);
+		GaussianAngularFreq = generator.Alloc1DArray_double(frequency_sample+1);
+		GaussianWavelength 	= generator.Alloc1DArray_double(frequency_sample+1);
+
+		for( int f = 0; f <= frequency_sample; f++ ) {
+			GaussianFreq[f] 		= f_min + f*df; // => m1*df + f*df => (f_min + f*df)
+			GaussianAngularFreq[f]	= 2.0 * PI * GaussianFreq[f];
+			GaussianWavelength[f]	= lightspeed / GaussianFreq[f];
+		}
+
 	}
-
-	//int m1=(int)round(f_min / df);			// The start grid of frequency step in freq domain
-	//int m2=(int)round(f_max / df),			// The end grid of frequency step in freq domain
-	//int m0=(int)round(f0    / df);			// The pitch grid of frequency step in freq domain
-
-	// For phasor
-	register int f;
-
-	double *frequency_G = new double [frequency_sample],
-	     *omega_G     = new double [frequency_sample];
-	for(f=0;f<frequency_sample;f++)
-	{ frequency_G[f] = (m1+f)*df; // => m1*df + f*df => (f_min + f*df)
-	omega_G[f]     = 2.0*PI*frequency_G[f]; }
-
-	double *lambda_G = new double [frequency_sample];
-	for(f=0;f<frequency_sample;f++)
-	{ lambda_G[f] = c / frequency_G[f]; }
-
 
 	Alloc3DArray();
 
 }
 
 void Fourier::Alloc3DArray() {
-	Parameter param;
+	/*Parameter param;
 	int SIZE_X = param.SIZE_X;
 	int SIZE_Y = param.SIZE_Y;
-	int SIZE_Z = param.SIZE_Z;
+	int SIZE_Z = param.SIZE_Z;*/
 
 	ArrayGenerator generator;
 
@@ -84,9 +73,9 @@ void Fourier::Alloc3DArray() {
 }
 
 Fourier::~Fourier() {
-	Parameter param;
+	/*Parameter param;
 	int SIZE_X = param.SIZE_X;
-	int SIZE_Y = param.SIZE_Y;
+	int SIZE_Y = param.SIZE_Y;*/
 
 	for( int i = 0; i < SIZE_X; i++ ) {
 		for( int j = 0; j < SIZE_Y; j++ ) {
@@ -190,77 +179,269 @@ Fourier::~Fourier() {
 	delete[] Hz_phasor_cos; Hz_phasor_cos = NULL;
 	delete[] abs_Hz_phasor; abs_Hz_phasor = NULL;
 	delete[] Hz_phase; Hz_phase = NULL;
+
+	if( SourceMode == 2 ) {
+		delete[] GaussianFreq; GaussianFreq = NULL;
+		delete[] GaussianAngularFreq; GaussianAngularFreq = NULL;
+		delete[] GaussianWavelength; GaussianWavelength = NULL;
+	}
 }
 
-void FT_SineWave(double ***Ex, double ***Ey, double ***Ez,
-				 double ***Hx, double ***Hy, double ***Hz,
-				 double *ex,   double *hy,   int t         ) {
-	Parameter param;
+void Fourier::FT_SineWave(double ***Ex, double ***Ey, double ***Ez,
+						  double ***Hx, double ***Hy, double ***Hz,
+						  double *ex,   double *hy,   int t         ) {
+	/*Parameter param;
 	int SIZE_X = param.SIZE_X;
 	int SIZE_Y = param.SIZE_Y;
-	int SIZE_Z = param.SIZE_Z;
+	int SIZE_Z = param.SIZE_Z;*/
 
 	if( t > fourier_start && t <= fourier_end ) {
 
 		for( int i = 0; i < SIZE_X-1; i++ )
 			for( int j = 0; j < SIZE_Y; j++ )
 				for( int k = 0; k < SIZE_Z; k++ ) {
-					Ex_phasor_sin[i][j][k] += Ex[i][j][k] * sin(omega*dt*t);
-					Ex_phasor_cos[i][j][k] += Ex[i][j][k] * cos(omega*dt*t);
+					Ex_phasor_sin[i][j][k] += Ex[i][j][k] * sin(angularFreq*dt*t);
+					Ex_phasor_cos[i][j][k] += Ex[i][j][k] * cos(angularFreq*dt*t);
 
 					// Modify fields because of the source
 					if( (i>=startX && i<=endX) && (j>=startY+1 && j<=endY ) && (k>=startZ && k<=endZ) ) {
-						Ex_phasor_sin[i][j][k] -= ex[k] * sin(omega*dt*t);
-						Ex_phasor_cos[i][j][k] -= ex[k] * cos(omega*dt*t);
+						Ex_phasor_sin[i][j][k] -= ex[k] * sin(angularFreq*dt*t);
+						Ex_phasor_cos[i][j][k] -= ex[k] * cos(angularFreq*dt*t);
 					}
 		}
 		for( int i = 0; i < SIZE_X; i++ )
 			for( int j = 0; j < SIZE_Y-1; j++ )
 				for( int k = 0; k < SIZE_Z; k++ ) {
-					Ey_phasor_sin[i][j][k] += Ey[i][j][k] * sin(omega*dt*t);
-					Ey_phasor_cos[i][j][k] += Ey[i][j][k] * cos(omega*dt*t);
+					Ey_phasor_sin[i][j][k] += Ey[i][j][k] * sin(angularFreq*dt*t);
+					Ey_phasor_cos[i][j][k] += Ey[i][j][k] * cos(angularFreq*dt*t);
 		}
 		for( int i = 0; i < SIZE_X; i++ )
 			for( int j = 0; j < SIZE_Y; j++ )
 				for( int k = 0; k < SIZE_Z-1; k++ ) {
-					Ez_phasor_sin[i][j][k] += Ez[i][j][k] * sin(omega*dt*t);
-					Ez_phasor_cos[i][j][k] += Ez[i][j][k] * cos(omega*dt*t);
+					Ez_phasor_sin[i][j][k] += Ez[i][j][k] * sin(angularFreq*dt*t);
+					Ez_phasor_cos[i][j][k] += Ez[i][j][k] * cos(angularFreq*dt*t);
 		}
 		for( int i = 0; i < SIZE_X; i++ )
 			for( int j = 0; j < SIZE_Y-1; j++ )
 				for( int k = 0; k < SIZE_Z-1; k++ ) {
-					Hx_phasor_sin[i][j][k] += Hx[i][j][k] * sin(omega*dt*t);
-					Hx_phasor_cos[i][j][k] += Hx[i][j][k] * cos(omega*dt*t);
+					Hx_phasor_sin[i][j][k] += Hx[i][j][k] * sin(angularFreq*dt*t);
+					Hx_phasor_cos[i][j][k] += Hx[i][j][k] * cos(angularFreq*dt*t);
 		}
 		for( int i = 0; i < SIZE_X-1; i++ )
-			for( int j = 0; j < SIEZ_Y; j++ )
+			for( int j = 0; j < SIZE_Y; j++ )
 				for( int k = 0; k < SIZE_Z-1; k++ )	{
-					Hy_phasor_sin[i][j][k] += Hy[i][j][k] * sin(omega*dt*t);
-					Hy_phasor_cos[i][j][k] += Hy[i][j][k] * cos(omega*dt*t);
+					Hy_phasor_sin[i][j][k] += Hy[i][j][k] * sin(angularFreq*dt*t);
+					Hy_phasor_cos[i][j][k] += Hy[i][j][k] * cos(angularFreq*dt*t);
 		
 					// Modify fields because of the source
 					if( (i>=startX && i<=endX) && (j>=startY+1 && j<=endY) && (k>=startZ && k<=endZ-1) ) {
-						Hy_phasor_sin[i][j][k] -= hy[k] * sin(omega*dt*t);
-						Hy_phasor_cos[i][j][k] -= hy[k] * cos(omega*dt*t);
+						Hy_phasor_sin[i][j][k] -= hy[k] * sin(angularFreq*dt*t);
+						Hy_phasor_cos[i][j][k] -= hy[k] * cos(angularFreq*dt*t);
 					}
 		}
 		for( int i = 0; i < SIZE_X-1; i++ )
 			for( int j = 0; j < SIZE_Y-1; j++ )
 				for( int k = 0; k < SIZE_Z; k++ ) {
-					Hz_phasor_sin[i][j][k] += Hz[i][j][k] * sin(omega*dt*t);
-					Hz_phasor_cos[i][j][k] += Hz[i][j][k] * cos(omega*dt*t);
+					Hz_phasor_sin[i][j][k] += Hz[i][j][k] * sin(angularFreq*dt*t);
+					Hz_phasor_cos[i][j][k] += Hz[i][j][k] * cos(angularFreq*dt*t);
 		}
 		    
-		ex_Re += ex[startZ] * sin(omega*t*dt)*dt;
-		ex_Im += ex[startZ] * cos(omega*t*dt)*dt;
+		ex_Re += ex[startZ] * sin(angularFreq*t*dt)*dt;
+		ex_Im += ex[startZ] * cos(angularFreq*t*dt)*dt;
 
-		hy_Re += hy[startZ] * cos(omega*t*dt)*dt;
-		hy_Im += hy[startZ] * sin(omega*t*dt)*dt;
+		hy_Re += hy[startZ] * cos(angularFreq*t*dt)*dt;
+		hy_Im += hy[startZ] * sin(angularFreq*t*dt)*dt;
 
 	}
 
 }
 
-void FT_GaussianWave() {
+void Fourier::FT_GaussianWave() {
 
+}
+
+void Fourier::Phasor_SineWave() {
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y; j++ )
+			for( int k = 0; k < SIZE_Z; k++ ) {
+				Ex_phasor_sin[i][j][k] = (2.0/stepPerPeriod) * Ex_phasor_sin[i][j][k];
+				Ex_phasor_cos[i][j][k] = (2.0/stepPerPeriod) * Ex_phasor_cos[i][j][k];
+				abs_Ex_phasor[i][j][k] = sqrt( (Ex_phasor_sin[i][j][k] * Ex_phasor_sin[i][j][k]) +
+											   (Ex_phasor_cos[i][j][k] * Ex_phasor_cos[i][j][k]) );
+				Ex_phase[i][j][k] = 180/PI*atan2(Ex_phasor_sin[i][j][k],Ex_phasor_cos[i][j][k]);
+			}
+
+	for( int i = 0; i < SIZE_X; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z; k++ ) {
+				Ey_phasor_sin[i][j][k] = (2.0/stepPerPeriod) * Ey_phasor_sin[i][j][k];
+				Ey_phasor_cos[i][j][k] = (2.0/stepPerPeriod) * Ey_phasor_cos[i][j][k];
+				abs_Ey_phasor[i][j][k] = sqrt( (Ey_phasor_sin[i][j][k] * Ey_phasor_sin[i][j][k]) +
+											   (Ey_phasor_cos[i][j][k] * Ey_phasor_cos[i][j][k]) );
+				Ey_phase[i][j][k] = 180/PI*atan2(Ey_phasor_sin[i][j][k],Ey_phasor_cos[i][j][k]);
+			}
+
+	for( int i = 0; i < SIZE_X; i++ )
+		for( int j = 0; j < SIZE_Y; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				Ez_phasor_sin[i][j][k] = (2.0/stepPerPeriod) * Ez_phasor_sin[i][j][k];
+				Ez_phasor_cos[i][j][k] = (2.0/stepPerPeriod) * Ez_phasor_cos[i][j][k];
+				abs_Ez_phasor[i][j][k] = sqrt( (Ez_phasor_sin[i][j][k] * Ez_phasor_sin[i][j][k]) +
+											   (Ez_phasor_cos[i][j][k] * Ez_phasor_cos[i][j][k]) );
+				Ez_phase[i][j][k] = 180/PI*atan2(Ez_phasor_sin[i][j][k],Ez_phasor_cos[i][j][k]);
+			}
+
+	for( int i = 0; i < SIZE_X; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ ) {
+				Hx_phasor_sin[i][j][k] = (2.0/stepPerPeriod) * Hx_phasor_sin[i][j][k];
+				Hx_phasor_cos[i][j][k] = (2.0/stepPerPeriod) * Hx_phasor_cos[i][j][k];
+				abs_Hx_phasor[i][j][k] = sqrt( (Hx_phasor_sin[i][j][k] * Hx_phasor_sin[i][j][k]) +
+											   (Hx_phasor_cos[i][j][k] * Hx_phasor_cos[i][j][k]) );
+				Hx_phase[i][j][k] = 180/PI*atan2(Hx_phasor_sin[i][j][k],Hx_phasor_cos[i][j][k]);
+			}
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y; j++ )
+			for( int k = 0; k < SIZE_Z-1; k++ )	{
+				Hy_phasor_sin[i][j][k] = (2.0/stepPerPeriod) * Hy_phasor_sin[i][j][k];
+				Hy_phasor_cos[i][j][k] = (2.0/stepPerPeriod) * Hy_phasor_cos[i][j][k];
+				abs_Hy_phasor[i][j][k] = sqrt( (Hy_phasor_sin[i][j][k] * Hy_phasor_sin[i][j][k]) +
+											   (Hy_phasor_cos[i][j][k] * Hy_phasor_cos[i][j][k]) );
+				Hy_phase[i][j][k] = 180/PI*atan2(Hy_phasor_sin[i][j][k],Hy_phasor_cos[i][j][k]);
+			}
+
+	for( int i = 0; i < SIZE_X-1; i++ )
+		for( int j = 0; j < SIZE_Y-1; j++ )
+			for( int k = 0; k < SIZE_Z; k++ ) {
+				Hz_phasor_sin[i][j][k] = (2.0/stepPerPeriod) * Hz_phasor_sin[i][j][k];
+				Hz_phasor_cos[i][j][k] = (2.0/stepPerPeriod) * Hz_phasor_cos[i][j][k];
+				abs_Hz_phasor[i][j][k] = sqrt( (Hz_phasor_sin[i][j][k] * Hz_phasor_sin[i][j][k]) +
+											   (Hz_phasor_cos[i][j][k] * Hz_phasor_cos[i][j][k]) );
+				Hz_phase[i][j][k] = 180/PI*atan2(Hz_phasor_sin[i][j][k],Hz_phasor_cos[i][j][k]);
+			}
+}
+
+void Fourier::Output_Phasor_SineWave() {
+	// Note: All output data are on x-y plane.
+	int k = SIZE_Z/2;
+
+	FILE *file;
+	file = fopen("Phasor_Ex.log","w");
+	for( int j = 0; j < SIZE_Y; j++ ) {
+		for( int i = 0; i < SIZE_X-1; i++ ) {
+			fprintf(file, "%g ", abs_Ex_phasor[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = fopen("Phasor_Ey.log","w");
+	for( int j = 0; j < SIZE_Y-1; j++ ) {
+		for( int i = 0; i < SIZE_X; i++ ) {
+			fprintf(file, "%g ", abs_Ey_phasor[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = fopen("Phasor_Ez.log","w");
+	for( int j = 0; j < SIZE_Y; j++ ) {
+		for( int i = 0; i < SIZE_X; i++ ) {
+			fprintf(file, "%g ", abs_Ez_phasor[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = fopen("Phasor_Hx.log","w");
+	for( int j = 0; j < SIZE_Y-1; j++ ) {
+		for( int i = 0; i < SIZE_X; i++ ) {
+			fprintf(file, "%g ", abs_Hx_phasor[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = fopen("Phasor_Hy.log","w");
+	for( int j = 0; j < SIZE_Y; j++ ) {
+		for( int i = 0; i < SIZE_X-1; i++ ) {
+			fprintf(file, "%g ", abs_Hy_phasor[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = fopen("Phasor_Hz.log","w");
+	for( int j = 0; j < SIZE_Y-1; j++ ) {
+		for( int i = 0; i < SIZE_X-1; i++ ) {
+			fprintf(file, "%g ", abs_Hz_phasor[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = NULL;
+}
+
+void Fourier::Output_Phase_SineWave() {
+	// Note: All output data are on x-y plane.
+	int k = SIZE_Z/2;
+
+	FILE *file;
+	file = fopen("Phase_Ex.log","w");
+	for( int j = 0; j < SIZE_Y; j++ ) {
+		for( int i = 0; i < SIZE_X-1; i++ ) {
+			fprintf(file, "%g ", Ex_phase[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = fopen("Phase_Ey.log","w");
+	for( int j = 0; j < SIZE_Y-1; j++ ) {
+		for( int i = 0; i < SIZE_X; i++ ) {
+			fprintf(file, "%g ", Ey_phase[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = fopen("Phase_Ez.log","w");
+	for( int j = 0; j < SIZE_Y; j++ ) {
+		for( int i = 0; i < SIZE_X; i++ ) {
+			fprintf(file, "%g ", Ez_phase[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = fopen("Phase_Hx.log","w");
+	for( int j = 0; j < SIZE_Y-1; j++ ) {
+		for( int i = 0; i < SIZE_X; i++ ) {
+			fprintf(file, "%g ", Hx_phase[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = fopen("Phase_Hy.log","w");
+	for( int j = 0; j < SIZE_Y; j++ ) {
+		for( int i = 0; i < SIZE_X-1; i++ ) {
+			fprintf(file, "%g ", Hy_phase[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = fopen("Phase_Hz.log","w");
+	for( int j = 0; j < SIZE_Y-1; j++ ) {
+		for( int i = 0; i < SIZE_X-1; i++ ) {
+			fprintf(file, "%g ", Hz_phase[i][j][k]);
+		}
+		fprintf(file, "\n");
+	}
+	fclose(file);
+
+	file = NULL;
 }

@@ -7,6 +7,7 @@
 #include "CPML.h"
 #include "Parameter.h"
 #include "TFSF.h"
+#include "Fourier.h"
 using namespace std;
 
 Parameter param;
@@ -44,8 +45,11 @@ int main() {
 	double ***Hz = updater.getHz();
 	cout << "[INFO] Initialized class Update." << endl;
 
-	TFSF tfsf(&cpml);
+	TFSF tfsf;
 	cout << "[INFO] Initialized class TFSF." << endl;
+
+	Fourier fourier;
+	cout << "[INFO] Initialized class Fourier." << endl;
 
 	FILE *snapshot;
 	snapshot = fopen("ex.log","w");
@@ -54,7 +58,7 @@ int main() {
 	}
 	fprintf(snapshot, "\n");
 	//cout << "[INFO] Start entering the time loop." << endl;
-	for (int t = 1; t < 1000; t++) {
+	for (int t = 1; t <= 1000; t++) {
 
 		updater.Update1Dfield_e(t);
 
@@ -66,8 +70,8 @@ int main() {
 	
 		updater.Update3DCpml_E();
 
-		tfsf.AddTfsf_XYPlane_E(Ex, Ey, Ez, hy);
-		//tfsf.AddTfsf_Box_E(Ex, Ey, Ez, hy);
+		//tfsf.AddTfsf_XYPlane_E(Ex, Ey, Ez, hy);
+		tfsf.AddTfsf_Box_E(Ex, Ey, Ez, hy);
 
 		updater.Update1Dfield_h(t);
 
@@ -77,8 +81,8 @@ int main() {
 
 		updater.Update3DCpml_H();
 
-		tfsf.AddTfsf_XYPlane_H(Hx, Hy, Hz, ex);
-		//tfsf.AddTfsf_Box_H(Hx, Hy, Hz, ex);
+		//tfsf.AddTfsf_XYPlane_H(Hx, Hy, Hz, ex);
+		tfsf.AddTfsf_Box_H(Hx, Hy, Hz, ex);
 
 		for (int k = 0; k < SIZE1D; k++) {
 			fprintf(snapshot, "%g ", ex[k]);
@@ -87,21 +91,26 @@ int main() {
 		
 		updater.OutputEx_YZPlane(t);
 
+		fourier.FT_SineWave(Ex, Ey, Ez, Hx, Hy, Hz, ex, hy, t);
+
 		ShowProgress(t);
 
 	}
 	//cout << "[Debug] Time loop done." << endl;
-
 	fclose(snapshot);
 	//cout << "[Debug] snapshot done." << endl;
 	snapshot = NULL;
+
+	fourier.Phasor_SineWave();
+	fourier.Output_Phasor_SineWave();
+	fourier.Output_Phase_SineWave();
 
 	cout << "[INFO] Finished." << endl;
 	return 0;
 }
 
 void ShowProgress(int time_step) {
-	int percent = (int)floor(100 * (time_step+1)/1000);
+	int percent = (int)floor(100 * (time_step)/1000);
 	static int A = 0;
 
 	if( time_step == 1 ) {
