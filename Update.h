@@ -1,12 +1,14 @@
 #ifndef UPDATE_H
 #define	UPDATE_H
 
-class Update {
-private:
+#include "Coefficient.h"
+class Update : public Coefficient {
+protected:
 	// 1D Field;
 	double *ex;
 	double *hy;
 
+private:
 	double ex_bef_start;
 	double ex_bef_end;
 
@@ -16,6 +18,7 @@ private:
 
 	void Alloc1DArray();
 
+protected:
 	// 3D Field;
 	double ***Ex;
 	double ***Ey;
@@ -24,6 +27,7 @@ private:
 	double ***Hy;
 	double ***Hz;
 
+private:
 	// 3D psi function
 	double ***psi_Ex_Hz;
 	double ***psi_Ex_Hy;
@@ -45,21 +49,17 @@ public:
 	Update();
 	~Update();
 
-	void Update1Dfield_e(double *Cex, int t);
-	void Update1Dfield_h(double *Chy, int t);
+	void Update1Dfield_e(int t);
+	void Update1Dfield_h(int t);
 
-	void Update1DCpml_ex(int CPMLGrid, double *B_e, double *C_e);
-	void Update1DCpml_hy(int CPMLGrid, double *B_h, double *C_h);
+	void Update1DCpml_ex();
+	void Update1DCpml_hy();
 
-	void Update3Dfield_E(double ***Cexz, double ***Cexy, double ***Ceyx,
-						 double ***Ceyz, double ***Cezy, double ***Cezx,
-						 int t);
-	void Update3Dfield_H(double ***Chxz, double ***Chxy, double ***Chyx,
-						 double ***Chyz, double ***Chzy, double ***Chzx,
-						 int t);
+	void Update3Dfield_E(int t);
+	void Update3Dfield_H(int t);
 
-	void Update3DCpml_E(int CPMLGrid, double *B_e, double *C_e);
-	void Update3DCpml_H(int CPMLGrid, double *B_h, double *C_h);
+	void Update3DCpml_E();
+	void Update3DCpml_H();
 
 	void OutputEx_XYPlane(int t);
 	void OutputEx_YZPlane(int t);

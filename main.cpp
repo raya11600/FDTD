@@ -34,23 +34,6 @@ int main() {
 	double *C_h = cpml.getC_h();
 
 	Coefficient coef;
-	//coef.Init1DCoefWithCpml();
-	//coef.Init3DCoefWithCpml();
-	double *Cex = coef.getCex();
-	double *Chy = coef.getChy();
-	double ***Cexz = coef.getCexz();
-	double ***Cexy = coef.getCexy();
-	double ***Ceyx = coef.getCeyx();
-	double ***Ceyz = coef.getCeyz();
-	double ***Cezy = coef.getCezy();
-	double ***Cezx = coef.getCezx();
-
-	double ***Chxz = coef.getChxz();
-	double ***Chxy = coef.getChxy();
-	double ***Chyx = coef.getChyx();
-	double ***Chyz = coef.getChyz();
-	double ***Chzy = coef.getChzy();
-	double ***Chzx = coef.getChzx();
 	coef.OutputCoef();
 	cout << "[INFO] Initialize class Coefficient" << endl;
 
@@ -77,28 +60,28 @@ int main() {
 	//cout << "[INFO] Start entering the time loop." << endl;
 	for (int t = 1; t < 1000; t++) {
 
-		updater.Update1Dfield_e(Cex, t);
+		updater.Update1Dfield_e(t);
 
 		tfsf.Add1DSource(ex, &source, t);
 
-		updater.Update1DCpml_ex(CPMLGrid, B_e, C_e);
+		updater.Update1DCpml_ex();
 
-		//updater.Update3Dfield_E(Cexz, Cexy, Ceyx, Ceyz, Cezy, Cezx, t);
+		updater.Update3Dfield_E(t);
 	
-		//updater.Update3DCpml_E(CPMLGrid, B_e, C_e);
+		updater.Update3DCpml_E();
 
-		//tfsf.AddTfsf_XYPlane_E(Ex, Ey, Ez, hy);
+		tfsf.AddTfsf_XYPlane_E(Ex, Ey, Ez, hy);
 		//tfsf.AddTfsf_Box_E(Ex, Ey, Ez, hy);
 
-		updater.Update1Dfield_h(Chy, t);
+		updater.Update1Dfield_h(t);
 
-		updater.Update1DCpml_hy(CPMLGrid, B_h, C_h);
+		updater.Update1DCpml_hy();
 
-		//updater.Update3Dfield_H(Chxz, Chxy, Chyx, Chyz, Chzy, Chzx, t);
+		updater.Update3Dfield_H(t);
 
-		//updater.Update3DCpml_H(CPMLGrid, B_h, C_h);
+		updater.Update3DCpml_H();
 
-		//tfsf.AddTfsf_XYPlane_H(Hx, Hy, Hz, ex);
+		tfsf.AddTfsf_XYPlane_H(Hx, Hy, Hz, ex);
 		//tfsf.AddTfsf_Box_H(Hx, Hy, Hz, ex);
 
 		for (int k = 0; k < SIZE1D; k++) {
