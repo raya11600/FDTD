@@ -9,12 +9,9 @@ protected:
 	double c_e;		// = dt/dx/eps0
 	double c_h;		// = dt/dx/mu0
 
-private:
 	// 1D Coefficients
 	double *Cex;
 	double *Chy;
-
-	void InitBasicCoef1D();
 
 	// 3D Coefficients
 	double ***Cexz;
@@ -31,6 +28,8 @@ private:
 	double ***Chzy;
 	double ***Chzx;
 
+private:
+	void InitBasicCoef1D();
 	void Alloc3DArray();
 	void InitBasicCoef3D();
 
