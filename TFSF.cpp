@@ -3,10 +3,6 @@
 using namespace std;
 
 TFSF::TFSF(int CPMLGrid) {
-	/*Parameter param;
-	int SIZE_X = SIZE_X;
-	int SIZE_Y = SIZE_Y;
-	int SIZE_Z = SIZE_Z;*/
 	TFSFSwitch = true;
 	// true:  on
 	// false: off
@@ -30,11 +26,6 @@ void TFSF::Add1DSource(double *ex, Source *source, int t) {
 }
 
 void TFSF::AddTfsf_XYPlane_E(double ***Ex, double ***Ey, double ***Ez, double *hy) {
-	/*Parameter param;
-	int SIZE_X = SIZE_X;
-	int SIZE_Y = SIZE_Y;
-	int SIZE_Z = SIZE_Z;*/
-
 	int k = startZ;
 	for( int i = 0; i < SIZE_X-1; i++ )
 		for( int j = 1; j < SIZE_Y-1; j++ ) { 
@@ -44,11 +35,6 @@ void TFSF::AddTfsf_XYPlane_E(double ***Ex, double ***Ey, double ***Ez, double *h
 }
 
 void TFSF::AddTfsf_XYPlane_H(double ***Hx, double ***Hy, double ***Hz, double *ex) {
-	/*Parameter param;
-	int SIZE_X = SIZE_X;
-	int SIZE_Y = SIZE_Y;
-	int SIZE_Z = SIZE_Z;*/
-
 	int k = startZ; 
 	for( int i = 0; i < SIZE_X-1; i++ )
 		for( int j = 0; j < SIZE_Y; j++ ) {
@@ -57,7 +43,6 @@ void TFSF::AddTfsf_XYPlane_H(double ***Hx, double ***Hy, double ***Hz, double *e
 }
 
 void TFSF::AddTfsf_Box_E(double ***Ex, double ***Ey, double ***Ez, double *hy) {
-	//Parameter param;
 	int i, j, k;
 
 	k = startZ;
@@ -84,7 +69,6 @@ void TFSF::AddTfsf_Box_E(double ***Ex, double ***Ey, double ***Ez, double *hy) {
 }
 
 void TFSF::AddTfsf_Box_H(double ***Hx, double ***Hy, double ***Hz, double *ex) {
-	//Parameter param;
 	int i, j, k;
 
 	k = startZ; 
