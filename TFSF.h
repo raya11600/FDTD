@@ -2,17 +2,19 @@
 #define TFSF_H
 
 #include "Source.h"
+#include "Parameter.h"
 
-class TFSF {
-private:
-	int TFSFGrid;
+class TFSF : public Parameter {
+protected:
+	bool 	TFSFSwitch;
+	int 	TFSFGrid;
 
-	int startX;
-	int startY;
-	int startZ;
-	int endX;
-	int endY;
-	int endZ;
+	int 	startX;
+	int 	startY;
+	int 	startZ;
+	int 	endX;
+	int 	endY;
+	int 	endZ;
 
 public:
 	TFSF(int CPMLGrid);
