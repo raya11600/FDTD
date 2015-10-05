@@ -131,6 +131,14 @@ int CPML::getCPMLGrid() {
 	return CPMLGrid;
 }
 
+int CPML::getCPMLMode() {
+	return CPMLMode;
+}
+
+bool CPML::getCPMLSwitch() {
+	return CPMLSwitch;
+}
+
 double *CPML::getkappa_e() {
 	return kappa_e;
 }

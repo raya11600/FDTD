@@ -26,6 +26,9 @@ public:
 	void OutputCPML();
 
 	int 	getCPMLGrid();
+	int 	getCPMLMode();
+	bool 	getCPMLSwitch();
+	
 	double *getB_e();
 	double *getB_h();
 	double *getC_e();
