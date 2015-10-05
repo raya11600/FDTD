@@ -22,8 +22,6 @@ Source::~Source() {
 }
 
 void Source::InitSineWave() {
-	Parameter param;
-
 	wavelength 		= 0.85e-6;	//unit: m
 	sourcePeriod	= 11;
 	sourceFreq 		= lightspeed / wavelength;
@@ -36,8 +34,6 @@ void Source::InitSineWave() {
 }
 
 void Source::InitGaussianWave() {
-	Parameter param;
-
 	wavelength_max		= 1.1e-6;
 	wavelength_min		= 0.7e-6;
 	frequency_sample 	= 201; 
@@ -59,8 +55,6 @@ void Source::InitGaussianWave() {
 }
 
 double Source::getSource(int t) {
-	Parameter param;
-
 	if( SourceMode == 1 ) {
 		return sin( angularFreq * dt * t );
 	}
