@@ -8,7 +8,7 @@ fig = plt.figure()
 plt.xlim(0, 100)
 plt.ylim(-1, 1)
 images = []
-for i in range(1000):
+for i in range(4252,9218):
 	x = data[0, :]
 	y = data[i, :]
 	im = plt.plot(x, y, "b", lw=3)
@@ -16,7 +16,7 @@ for i in range(1000):
 
 
 
-ani = animation.ArtistAnimation(fig, images, interval=50, 
+ani = animation.ArtistAnimation(fig, images, interval=5, 
 							blit=True, repeat_delay=2000)
 #ani.save('dynamic_images.mp4')
 
