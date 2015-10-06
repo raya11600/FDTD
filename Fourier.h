@@ -58,15 +58,18 @@ public:
 	Fourier();
 	~Fourier();
 
+	// Sine wave
 	void FT_SineWave(double ***Ex, double ***Ey, double ***Ez,
 					 double ***Hx, double ***Hy, double ***Hz,
 					 double *ex,   double *hy,   int t         );
-	void FT_GaussianWave();
-
 	void Phasor_SineWave();
-
 	void Output_Phasor_SineWave();
 	void Output_Phase_SineWave();
+
+	// Gaussian wave
+	void FT_GaussianWave();
+
+	void OutputFourier();
 };
 
 #endif

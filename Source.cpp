@@ -4,7 +4,7 @@
 using namespace std;
 
 Source::Source() {
-	SourceMode = 1;
+	SourceMode = 2;
 	// 1: Sine wave
 	// 2: Gaussian wave
 
@@ -33,9 +33,9 @@ void Source::InitSineWave() {
 }
 
 void Source::InitGaussianWave() {
-	wavelength_max		= 1.1e-6;
-	wavelength_min		= 0.7e-6;
-	frequency_sample 	= 100; 
+	wavelength_max		= 10e-6;//1.1e-6;
+	wavelength_min		= 0.1e-6;//0.7e-6;
+	frequency_sample 	= 200; 
 
 	f_max 	= lightspeed / wavelength_min;
 	f_min 	= lightspeed / wavelength_max;
