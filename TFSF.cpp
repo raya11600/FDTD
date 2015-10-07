@@ -11,14 +11,27 @@ TFSF::TFSF() {
 	// 1: Add TFSF in an x-y plane
 	// 2: Add TFSF in a box.
 
-	TFSFGrid = 20 + 5;
+	TFSFGrid = 20 + 5; // = CPMLGrid + 5
 
-	startX 	= TFSFGrid - 1;
-	endX 	= SIZE_X - TFSFGrid - 1;
-	startY 	= TFSFGrid - 1;
-	endY 	= SIZE_Y - TFSFGrid - 1;
-	startZ 	= TFSFGrid - 1;
-	endZ 	= SIZE_Z - TFSFGrid - 1;
+	if( SourceMode == 1 ) {
+		// If source is the sine wave,
+		startX 	= TFSFGrid - 1;
+		endX 	= SIZE_X - TFSFGrid - 1;
+		startY 	= TFSFGrid - 1;
+		endY 	= SIZE_Y - TFSFGrid - 1;
+		startZ 	= TFSFGrid - 1;
+		endZ 	= SIZE_Z - TFSFGrid - 1;
+	}
+	else if( SourceMode == 2 ) {
+		// If source is Gaussian wave,
+		/*startX 	= TFSFGrid - 1;
+		endX 	= SIZE_X - TFSFGrid - 1;
+		startY 	= TFSFGrid - 1;
+		endY 	= SIZE_Y - TFSFGrid - 1;*/
+		startZ 	= TFSFGrid - 1;
+		endZ 	= SIZE_Z - TFSFGrid - 1;
+	}
+	
 }
 
 TFSF::~TFSF() {
