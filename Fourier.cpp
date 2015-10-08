@@ -5,6 +5,9 @@
 using namespace std;
 
 Fourier::Fourier() {
+	FourierSwitch	= true;
+	TransAndReflec	= false;
+
 	//Sine Wave
 	if( SourceMode == 1 ) {
 		fourier_start = (sourcePeriod - 1) * stepPerPeriod;
@@ -34,6 +37,14 @@ Fourier::Fourier() {
 		Snapshot_z = SIZE_Z/2;
 
 		AllocPhasorForGaussian();
+
+		if( TransAndReflec == true ) {
+			Poynting_scatter 	= generator.Alloc1DArray_double(frequency_sample+1);
+			Poynting_total 		= generator.Alloc1DArray_double(frequency_sample+1);
+			Poynting_source 	= generator.Alloc1DArray_double(frequency_sample+1);
+
+
+		}
 	}
 
 }
@@ -333,15 +344,16 @@ void Fourier::FT_SineWave(double ***Ex, double ***Ey, double ***Ez,
 					Hz_phasor_cos[i][j][k] += Hz[i][j][k] * cos(angularFreq*dt*t);
 		}
 		    
-		/*ex_Re += ex[startZ] * sin(angularFreq*t*dt)*dt;
-		ex_Im += ex[startZ] * cos(angularFreq*t*dt)*dt;
+		if( TransAndReflec == true ) {
+			ex_Re += ex[startZ] * sin(angularFreq*t*dt)*dt;
+			ex_Im += ex[startZ] * cos(angularFreq*t*dt)*dt;
 
-		hy_Re += hy[startZ] * cos(angularFreq*t*dt)*dt;
-		hy_Im += hy[startZ] * sin(angularFreq*t*dt)*dt;*/
+			hy_Re += hy[startZ] * cos(angularFreq*t*dt)*dt;
+			hy_Im += hy[startZ] * sin(angularFreq*t*dt)*dt;
+		}
 
 	  }
 	}
-
 }
 
 void Fourier::FT_GaussianWave(double ***Ex, double ***Ey, double ***Ez,
@@ -354,11 +366,11 @@ void Fourier::FT_GaussianWave(double ***Ex, double ***Ey, double ***Ez,
 		k = startZ;
 		// Do FT on 1D source field at a fixed point
 		for( int f = 0; f <= frequency_sample; f++ ) {
-			ex_phasor_G_sin[f] += ex[k] * sin(2*PI*(f_min+f*df)*t*dt) * dt;
-			ex_phasor_G_cos[f] += ex[k] * cos(2*PI*(f_min+f*df)*t*dt) * dt;
+			ex_phasor_G_sin[f] += ex[k] * sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
+			ex_phasor_G_cos[f] += ex[k] * cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
 
-			hy_phasor_G_sin[f] += hy[k] * sin(2*PI*(f_min+f*df)*t*dt) * dt;
-			hy_phasor_G_cos[f] += hy[k] * cos(2*PI*(f_min+f*df)*t*dt) * dt;
+			hy_phasor_G_sin[f] += hy[k] * sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
+			hy_phasor_G_cos[f] += hy[k] * cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
 		}
 
 		i = Snapshot_x;
@@ -366,53 +378,74 @@ void Fourier::FT_GaussianWave(double ***Ex, double ***Ey, double ***Ez,
 		k = Snapshot_z;
 		// Do FT on 3D fields at a fixed point
 		for( int f = 0; f <= frequency_sample; f++ ) {
-			Ex_phasor_G_sin[f] += Ex[i][j][k] * sin(2*PI*(f_min+f*df)*t*dt) * dt;
-			Ex_phasor_G_cos[f] += Ex[i][j][k] * cos(2*PI*(f_min+f*df)*t*dt) * dt;
-		
-			Ey_phasor_G_sin[f] += Ey[i][j][k] * sin(2*PI*(f_min+f*df)*t*dt) * dt;
-			Ey_phasor_G_cos[f] += Ey[i][j][k] * cos(2*PI*(f_min+f*df)*t*dt) * dt;
+			Ex_phasor_G_sin[f] += Ex[i][j][k] * sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
+			Ex_phasor_G_cos[f] += Ex[i][j][k] * cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
 
-			Ez_phasor_G_sin[f] += Ez[i][j][k] * sin(2*PI*(f_min+f*df)*t*dt) * dt;
-			Ez_phasor_G_cos[f] += Ez[i][j][k] * cos(2*PI*(f_min+f*df)*t*dt) * dt;
+			Ey_phasor_G_sin[f] += Ey[i][j][k] * sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
+			Ey_phasor_G_cos[f] += Ey[i][j][k] * cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
 
-			Hx_phasor_G_sin[f] += Hx[i][j][k] * sin(2*PI*(f_min+f*df)*t*dt) * dt;
-			Hx_phasor_G_cos[f] += Hx[i][j][k] * cos(2*PI*(f_min+f*df)*t*dt) * dt;
+			Ez_phasor_G_sin[f] += Ez[i][j][k] * sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
+			Ez_phasor_G_cos[f] += Ez[i][j][k] * cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
 
-			Hy_phasor_G_sin[f] += Hy[i][j][k] * sin(2*PI*(f_min+f*df)*t*dt) * dt;
-			Hy_phasor_G_cos[f] += Hy[i][j][k] * cos(2*PI*(f_min+f*df)*t*dt) * dt;
+			Hx_phasor_G_sin[f] += Hx[i][j][k] * sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
+			Hx_phasor_G_cos[f] += Hx[i][j][k] * cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
 
-			Hz_phasor_G_sin[f] += Hz[i][j][k] * sin(2*PI*(f_min+f*df)*t*dt) * dt;
-			Hz_phasor_G_cos[f] += Hz[i][j][k] * cos(2*PI*(f_min+f*df)*t*dt) * dt;
+			Hy_phasor_G_sin[f] += Hy[i][j][k] * sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
+			Hy_phasor_G_cos[f] += Hy[i][j][k] * cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
+
+			Hz_phasor_G_sin[f] += Hz[i][j][k] * sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
+			Hz_phasor_G_cos[f] += Hz[i][j][k] * cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
 		}
 
+		if( TransAndReflec == true ) {
+			/* We calculate transmittance inside the total field and reflectance
+			   out in the scatter field.
+			   Here we just calculate T & R in x-y plane on z direction.
+			   You can add any fields you want to calculate in different direction.
+			*/
+			for( int f = 0; f <= frequency_sample; f++ ) {
+				// Do FT on each 3D field
+					/* We split FT to the real and imaginary part. 
+					   The transmittance and reflectance will be calculate outside
+					   the time loop. */
+				int re_z = startZ - 10;
+				int tr_z = startZ + 10;
 
-		/*for( int i = 0; i < SIZE_X-1; i++ )
-			for( int j = 0; j < SIZE_Y-1; j++ ) {
-				R_Ex_Im[i][j][f]=R_Ex_Im[i][j][f]+Ex[i][j][re_z]*sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
-				R_Ex_Re[i][j][f]=R_Ex_Re[i][j][f]+Ex[i][j][re_z]*cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
+				for( int i = 0; i < SIZE_X-1; i++ )
+					for( int j = 0; j < SIZE_Y-1; j++ ) {
+						R_Ex_Im[i][j][f] += Ex[i][j][re_z]*sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
+						R_Ex_Re[i][j][f] += Ex[i][j][re_z]*cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
 
-				R_Hy_Im[i][j][f]=R_Hy_Im[i][j][f]+Hy[i][j][re_z]*sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
-				R_Hy_Re[i][j][f]=R_Hy_Re[i][j][f]+Hy[i][j][re_z]*cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
+						R_Hy_Im[i][j][f] += Hy[i][j][re_z]*sin(2.0*PI*(f_min+f*df)*t*dt) * dt;
+						R_Hy_Re[i][j][f] += Hy[i][j][re_z]*cos(2.0*PI*(f_min+f*df)*t*dt) * dt;
 
-				T_Ex_Im[i][j][f] = T_Ex_Im[i][j][f] + Ex[i][j][tr_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
-				T_Ex_Re[i][j][f] = T_Ex_Re[i][j][f] + Ex[i][j][tr_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						T_Ex_Im[i][j][f] += Ex[i][j][tr_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						T_Ex_Re[i][j][f] += Ex[i][j][tr_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
 
-				T_Hy_Im[i][j][f] = T_Hy_Im[i][j][f] + Hy[i][j][tr_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
-				T_Hy_Re[i][j][f] = T_Hy_Re[i][j][f] + Hy[i][j][tr_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						T_Hy_Im[i][j][f] += Hy[i][j][tr_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						T_Hy_Re[i][j][f] += Hy[i][j][tr_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
 
-				R_Ey_Im[i][j][f]=R_Ey_Im[i][j][f]+Ey[i][j][re_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
-				R_Ey_Re[i][j][f]=R_Ey_Re[i][j][f]+Ey[i][j][re_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						R_Ey_Im[i][j][f] += Ey[i][j][re_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						R_Ey_Re[i][j][f] += Ey[i][j][re_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
 
-				R_Hx_Im[i][j][f]=R_Hx_Im[i][j][f]+Hx[i][j][re_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
-				R_Hx_Re[i][j][f]=R_Hx_Re[i][j][f]+Hx[i][j][re_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						R_Hx_Im[i][j][f] += Hx[i][j][re_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						R_Hx_Re[i][j][f] += Hx[i][j][re_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
 
-				T_Ey_Im[i][j][f] = T_Ey_Im[i][j][f] + Ey[i][j][tr_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
-				T_Ey_Re[i][j][f] = T_Ey_Re[i][j][f] + Ey[i][j][tr_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						T_Ey_Im[i][j][f] += Ey[i][j][tr_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						T_Ey_Re[i][j][f] += Ey[i][j][tr_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
 
-				T_Hx_Im[i][j][f] = T_Hx_Im[i][j][f] + Hx[i][j][tr_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
-				T_Hx_Re[i][j][f] = T_Hx_Re[i][j][f] + Hx[i][j][tr_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
-			}*/
+						T_Hx_Im[i][j][f] += Hx[i][j][tr_z]*sin(2.0*PI*(f_min+f*df) *t*dt) * dt;
+						T_Hx_Re[i][j][f] += Hx[i][j][tr_z]*cos(2.0*PI*(f_min+f*df) *t*dt) * dt;
+					}
 
+				// Do FT on 1D source field
+				source_ex_Re[f] = ex_phasor_G_sin[f];
+				source_ex_Im[f] = ex_phasor_G_cos[f];
+
+				source_hy_Re[f] = hy_phasor_G_sin[f];
+				source_hy_Im[f] = hy_phasor_G_cos[f];
+			}
+		}
 	}
 }
 
@@ -515,6 +548,32 @@ void Fourier::Phasor_GaussianWave() {
 										(Hz_phasor_G_cos[f] * Hz_phasor_G_cos[f]) );
 			Hz_phase_G[f] = 180/PI*atan2(Hz_phasor_G_sin[f],  Hz_phasor_G_cos[f]);
 		}
+	}
+}
+
+void Fourier::TransReflec_GaussianWave() {
+	if( TransAndReflec == true ) {
+		ArrayGenerator generator;
+		
+		for( int f = 0; f <= frequency_sample; f++ )
+			for( int i = 0; i < SIZE_X-1; i++ )
+				for( int j = 0; j < SIZE_Y-1; j++ ) {
+					Poynting_source[f] = Poynting_source[f] +
+										( source_ex_Re[f]*source_hy_Re[f] +
+										  source_ex_Im[f]*source_hy_Im[f] );
+				
+					Poynting_scatter[f] = Poynting_scatter[f] 
+										- ( R_Ex_Re[i][j][f]*R_Hy_Re[i][j][f] +
+											R_Ex_Im[i][j][f]*R_Hy_Im[i][j][f] ) 
+										+ ( R_Ey_Re[i][j][f]*R_Hx_Re[i][j][f] +
+				    						R_Ey_Im[i][j][f]*R_Hx_Im[i][j][f] );
+
+					Poynting_total[f] = Poynting_total[f]
+										+ ( T_Ex_Re[i][j][f]*T_Hy_Re[i][j][f] +
+											T_Ex_Im[i][j][f]*T_Hy_Im[i][j][f] ) 
+										- ( T_Ey_Re[i][j][f]*T_Hx_Re[i][j][f] +
+											T_Ey_Im[i][j][f]*T_Hx_Im[i][j][f] );
+				}			
 	}
 }
 
@@ -645,6 +704,21 @@ void Fourier::Output_Phase_SineWave() {
 	}
 
 	file = NULL;
+}
+
+void Fourier::Output_TandR_GaussianWave() {
+	FILE *file;
+	file = fopen("TandR.log","w");
+	for( int f = 0; f <= frequency_sample; f++ ) {
+		fprintf(file, "%g %g %g %g %g %g\n",
+						Poynting_source[f],
+						Poynting_scatter[f],
+						Poynting_total[f],
+						Poynting_scatter[f]/Poynting_source[f],
+						GaussianWavelength[f],
+						GaussianFreq[f]);
+	}
+	fclose(file); file = NULL;
 }
 
 void Fourier::OutputFourier() {

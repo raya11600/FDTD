@@ -5,6 +5,9 @@
 
 class Fourier : public TFSF {
 protected:
+	bool FourierSwitch;
+	bool TransAndReflec;
+
 	// Basic Parameters
 	int fourier_start;
 	int fourier_end;
@@ -19,12 +22,6 @@ protected:
 	int Snapshot_z;
 
 private:
-	/*double ex_Re;
-	double ex_Im;
-
-	double hy_Re;
-	double hy_Im;*/
-
 	// Phasors for Sine wave
 	double ***Ex_phasor_sin;
 	double ***Ex_phasor_cos;
@@ -97,6 +94,40 @@ private:
 	double *abs_Hz_phasor_G;
 	double *Hz_phase_G;
 
+	// Variables for Transmittance & Reflectance
+	double ex_Re;
+	double ex_Im;
+
+	double hy_Re;
+	double hy_Im;
+
+	double ***R_Ex_Im;
+	double ***R_Ex_Re;
+	double ***R_Ey_Im;
+	double ***R_Ey_Re;
+	double ***R_Hx_Im;
+	double ***R_Hx_Re;
+	double ***R_Hy_Im;
+	double ***R_Hy_Re;
+
+	double ***T_Ex_Im;
+	double ***T_Ex_Re;
+	double ***T_Ey_Im;
+	double ***T_Ey_Re;
+	double ***T_Hx_Im;
+	double ***T_Hx_Re;
+	double ***T_Hy_Im;
+	double ***T_Hy_Re;
+
+	double *source_ex_Re;
+	double *source_ex_Im;
+	double *source_hy_Re;
+	double *source_hy_Im;
+
+	double *Poynting_scatter;
+	double *Poynting_total;
+	double *Poynting_source;
+
 	void AllocPhasorForSine();
 	void AllocPhasorForGaussian();
 
@@ -109,6 +140,7 @@ public:
 					 double ***Hx, double ***Hy, double ***Hz,
 					 double *ex,   double *hy,   int t         );
 	void Phasor_SineWave();
+	//void TransReflec_SineWave();
 	void Output_Phasor_SineWave();
 	void Output_Phase_SineWave();
 
@@ -117,7 +149,9 @@ public:
 						 double ***Hx, double ***Hy, double ***Hz,
 						 double *ex,   double *hy,   int t         );
 	void Phasor_GaussianWave();
-
+	void Output_Phasor_GaussianWave();
+	void TransReflec_GaussianWave();
+	void Output_TandR_GaussianWave();
 	
 	void OutputFourier();
 };
