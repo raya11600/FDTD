@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-I.
+CFLAGS=-I -03 -ffast-math.
 DEPS = Fourier.h Parameter.h ArrayGenerator.h Coefficient.h CPML.h Source.h TFSF.h Update.h
 
 %.o: %.c $(DEPS)
