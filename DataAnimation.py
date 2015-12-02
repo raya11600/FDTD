@@ -18,6 +18,6 @@ for i in range(4252,9218):
 
 ani = animation.ArtistAnimation(fig, images, interval=5, 
 							blit=True, repeat_delay=2000)
-ani.save('dynamic_images.mp4')
+#ani.save('dynamic_images.mp4')
 
 plt.show()
