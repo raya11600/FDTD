@@ -1,0 +1,8 @@
+To compile:
+	$ make
+
+To clean object file:
+	$ make clean_obj
+
+To clean all but source:
+	$ make clean_all

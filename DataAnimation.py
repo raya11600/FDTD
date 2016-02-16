@@ -5,12 +5,12 @@ from matplotlib import animation
 data = np.loadtxt("ex.log")
 
 fig = plt.figure()
-plt.xlim(0, 100)
-plt.ylim(-1, 1)
+#plt.xlim(0, 100)
+#plt.ylim(-1, 1)
 images = []
 for i in range(4252,9218):
-	x = data[0, :]
-	y = data[i, :]
+	x = data[0, 20:80]
+	y = data[i, 20:80]
 	im = plt.plot(x, y, "b", lw=3)
 	images.append(im)
 
